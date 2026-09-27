@@ -1,0 +1,63 @@
+[project]
+name = "sgi-agro-api"
+version = "0.1.0"
+description = "API del Sistema de Gestión Integral agro"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "sqlalchemy>=2.0.30",
+    "psycopg[binary]>=3.2",
+    "alembic>=1.13",
+    "pydantic-settings>=2.4",
+    "pyjwt>=2.9",
+    "argon2-cffi>=23.1",
+    "structlog>=24.4",
+    "uuid6>=2024.7.10",
+    "openpyxl>=3.1",
+    "reportlab>=4.2",
+    "python-multipart>=0.0.9",
+    "sentry-sdk[fastapi]>=2.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=5.0",
+    "httpx2>=2.13",
+    "mypy>=1.11",
+    "ruff>=0.6",
+    "types-openpyxl>=3.1",
+    "types-reportlab>=4.2",
+]
+
+[tool.uv]
+package = false
+
+# --- Ruff: lint + formato ---
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "SIM", "N", "RUF"]
+ignore = ["RUF001", "RUF002", "RUF003"]  # permite tildes/ñ en textos y comentarios
+
+[tool.ruff.lint.isort]
+# la carpeta local alembic/ no es el paquete; alembic es una librería externa
+known-third-party = ["alembic"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106"]  # assert y contraseñas de prueba
+
+# --- mypy ---
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+exclude = ["alembic/"]
+
+# --- pytest ---
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

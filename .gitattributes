@@ -1,0 +1,6 @@
+# Scripts y configuración que corren en Linux: siempre con fin de línea LF
+*.sh text eol=lf
+Caddyfile text eol=lf
+*.yml text eol=lf
+Dockerfile text eol=lf
+*.Dockerfile text eol=lf

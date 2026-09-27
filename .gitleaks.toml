@@ -1,0 +1,7 @@
+# Reglas por defecto de gitleaks + excepciones del proyecto
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Contraseñas ficticias usadas en los tests"
+paths = ['''^backend/tests/''']
