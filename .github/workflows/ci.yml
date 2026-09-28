@@ -36,7 +36,7 @@ jobs:
       JWT_SECRET: ci-secret-only-for-tests-0123456789abcdef
       UV_PROJECT_ENVIRONMENT: .venv
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v6
       - run: uv sync --frozen
       - name: Formato y lint
@@ -56,7 +56,7 @@ jobs:
       run:
         working-directory: frontend
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -75,7 +75,7 @@ jobs:
   secrets:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Secretos subidos por error (gitleaks)
