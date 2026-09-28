@@ -125,7 +125,7 @@ export function CycleDrawer({ cycle, opened, onClose, onOpenFieldBook }: Props) 
         plot_id: values.plot_id as string,
         crop_id: values.crop_id as string,
       });
-    notifySuccess(cycle ? 'Ciclo actualizado.' : 'Ciclo abierto.');
+    notifySuccess(cycle ? 'Cultivo actualizado.' : 'Cultivo empezado.');
     await invalidate();
   }
 
@@ -157,7 +157,7 @@ export function CycleDrawer({ cycle, opened, onClose, onOpenFieldBook }: Props) 
       onConfirm: () =>
         void run(
           () => cyclesApi.finish(cycle.id, endDate ?? dayjs().format('YYYY-MM-DD')),
-          'Ciclo finalizado.',
+          'Cultivo finalizado.',
         ),
     });
   }
@@ -172,7 +172,7 @@ export function CycleDrawer({ cycle, opened, onClose, onOpenFieldBook }: Props) 
       ),
       labels: { confirm: 'Reabrir', cancel: 'Cancelar' },
       onConfirm: () =>
-        void run(() => cyclesApi.reopen(cycle.id, reason || 'Sin motivo'), 'Ciclo reabierto.'),
+        void run(() => cyclesApi.reopen(cycle.id, reason || 'Sin motivo'), 'Cultivo reabierto.'),
     });
   }
 
@@ -182,7 +182,7 @@ export function CycleDrawer({ cycle, opened, onClose, onOpenFieldBook }: Props) 
     <EntityDrawer
       opened={opened}
       onClose={onClose}
-      title={cycle ? cycle.name : 'Abrir ciclo'}
+      title={cycle ? cycle.name : 'Empezar cultivo'}
       form={form}
       isEdit={cycle !== null}
       onSubmit={submit}
@@ -223,7 +223,7 @@ export function CycleDrawer({ cycle, opened, onClose, onOpenFieldBook }: Props) 
         </Paper>
       )}
       {finished && (
-        <Alert variant="light">Ciclo finalizado: sus datos y costos quedan fijos.</Alert>
+        <Alert variant="light">Cultivo finalizado: sus datos y costos quedan fijos.</Alert>
       )}
       <SimpleGrid cols={2}>
         <Select
@@ -235,7 +235,7 @@ export function CycleDrawer({ cycle, opened, onClose, onOpenFieldBook }: Props) 
           {...form.getInputProps('plot_id')}
         />
         <Select
-          label="Cultivo"
+          label="Tipo de cultivo"
           required
           searchable
           data={crops.map((c) => ({ value: c.id, label: c.name }))}

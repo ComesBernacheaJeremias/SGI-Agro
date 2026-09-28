@@ -225,7 +225,7 @@ export function AssetsField({ value, onChange, assets, readOnly }: AssetsProps) 
             />
             {asset && hasNoRate(asset) && (
               <Text size="xs" c="yellow.8" mb={8}>
-                Sin tarifa: no suma costo al ciclo (cargala en Activos)
+                Sin tarifa: no suma costo al cultivo (cargala en Activos)
               </Text>
             )}
             {asset && !hasNoRate(asset) && row.usage && (

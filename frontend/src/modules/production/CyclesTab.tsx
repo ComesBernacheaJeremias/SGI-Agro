@@ -55,7 +55,7 @@ export function CyclesTab({ onOpen }: Props) {
           w={150}
         />
       </Group>
-      {data?.items.length === 0 && <Text c="dimmed">No hay ciclos para mostrar.</Text>}
+      {data?.items.length === 0 && <Text c="dimmed">No hay cultivos para mostrar.</Text>}
       <SimpleGrid cols={{ base: 1, md: 2, lg: 3 }}>
         {data?.items.map((c) => (
           <InfoCard key={c.id} onClick={() => onOpen(c)}>

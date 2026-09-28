@@ -1,6 +1,8 @@
 import { Button } from '@mantine/core';
 import { Fragment, type ReactNode, useState } from 'react';
 
+import { type ActionKey, useOpenAction } from '@/app/actions';
+
 import { type Column, DataTable } from './DataTable';
 import { type ListState, useListState, useResourceList } from './hooks';
 import type { Entity, Resource } from './types';
@@ -25,6 +27,8 @@ type Props<T extends Entity, C, U> = {
    * el botón va a la derecha de la fila del buscador.
    */
   header?: (newButton: ReactNode) => ReactNode;
+  /** Acción de enlace (`?abrir=`) que abre el alta, ej. desde el manual. */
+  openAction?: ActionKey;
 };
 
 /** Listado estándar de un maestro: botón "Nuevo" + tabla + panel de alta/edición. */
@@ -39,6 +43,7 @@ export function CrudTab<T extends Entity, C, U>({
   extraParams,
   renderDrawer,
   header,
+  openAction,
 }: Props<T, C, U>) {
   const list = useListState(defaultSort);
   const { data, isFetching } = useResourceList(resource, { ...list.params, ...extraParams });
@@ -52,6 +57,8 @@ export function CrudTab<T extends Entity, C, U>({
     setOpened(true);
     setSession((n) => n + 1);
   }
+
+  useOpenAction(openAction && canCreate ? { [openAction]: () => open(null) } : {});
 
   const newButton = newLabel && canCreate && <Button onClick={() => open(null)}>{newLabel}</Button>;
 

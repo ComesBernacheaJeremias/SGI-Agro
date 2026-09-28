@@ -91,7 +91,7 @@ CROP_KIND_LABELS = {
 
 class Crop(BaseModel):
     __tablename__ = "crops"
-    __label__ = "Cultivo"
+    __label__ = "Tipo de cultivo"
     __display__ = "name"
 
     name: Mapped[str] = mapped_column(String(120), unique=True, info={"label": "Nombre"})
@@ -143,13 +143,13 @@ CYCLE_STATUS_LABELS = {CycleStatus.ACTIVE: "En curso", CycleStatus.FINISHED: "Fi
 
 class CropCycle(BaseModel):
     __tablename__ = "crop_cycles"
-    __label__ = "Ciclo productivo"
+    __label__ = "Cultivo"
     __display__ = "name"
 
     # "Tomate perita · Lote 3 · 2026/27" (se arma solo al crear)
     name: Mapped[str] = mapped_column(String(200), info={"label": "Nombre"})
     plot_id: Mapped[UUID] = mapped_column(ForeignKey("plots.id"), info={"label": "Lote"})
-    crop_id: Mapped[UUID] = mapped_column(ForeignKey("crops.id"), info={"label": "Cultivo"})
+    crop_id: Mapped[UUID] = mapped_column(ForeignKey("crops.id"), info={"label": "Tipo de cultivo"})
     season_id: Mapped[UUID] = mapped_column(ForeignKey("seasons.id"), info={"label": "Temporada"})
     area_ha: Mapped[Decimal] = mapped_column(Numeric(12, 2), info={"label": "Superficie (ha)"})
     start_date: Mapped[date] = mapped_column(Date, info={"label": "Inicio"})
@@ -226,7 +226,7 @@ class FieldOperation(BaseModel):
     cycles: Mapped[list["FieldOperationCycle"]] = relationship(
         cascade="all, delete-orphan",
         lazy="selectin",
-        info={"label": "Ciclos", "audit_key": "summary"},
+        info={"label": "Cultivos", "audit_key": "summary"},
     )
     inputs: Mapped[list["FieldOperationInput"]] = relationship(
         cascade="all, delete-orphan",
@@ -323,7 +323,7 @@ class Batch(BaseModel):
     code: Mapped[str] = mapped_column(String(60), unique=True, info={"label": "Código"})
     product_id: Mapped[UUID] = mapped_column(ForeignKey("products.id"), info={"label": "Producto"})
     crop_cycle_id: Mapped[UUID] = mapped_column(
-        ForeignKey("crop_cycles.id"), index=True, info={"label": "Ciclo"}
+        ForeignKey("crop_cycles.id"), index=True, info={"label": "Cultivo"}
     )
     field_operation_id: Mapped[UUID] = mapped_column(
         ForeignKey("field_operations.id"), info={"label": "Cosecha"}

@@ -1,6 +1,7 @@
 import { Button, Group, Tabs } from '@mantine/core';
 import { useState } from 'react';
 
+import { useOpenAction } from '@/app/actions';
 import { useCan } from '@/app/auth/session';
 import { PageHeader } from '@/shared/ui/PageHeader';
 
@@ -21,6 +22,17 @@ export function ProductionPage() {
   const [fieldBook, setFieldBook] = useState<Cycle | null>(null);
   const [operation, setOperation] = useState<OperationState | null>(null);
 
+  // Enlaces "?abrir=" (manual, tablero, avisos)
+  useOpenAction(
+    canWrite
+      ? {
+          cultivo: () => setCycle({ record: null }),
+          labor: () => setOperation({ id: null, harvest: false }),
+          cosecha: () => setOperation({ id: null, harvest: true }),
+        }
+      : {},
+  );
+
   return (
     <>
       <PageHeader
@@ -35,7 +47,7 @@ export function ProductionPage() {
                 Cargar cosecha
               </Button>
               <Button variant="default" onClick={() => setCycle({ record: null })}>
-                Abrir ciclo
+                Empezar cultivo
               </Button>
             </Group>
           )
@@ -43,7 +55,7 @@ export function ProductionPage() {
       />
       <Tabs defaultValue="cycles" keepMounted={false}>
         <Tabs.List mb="md">
-          <Tabs.Tab value="cycles">Ciclos</Tabs.Tab>
+          <Tabs.Tab value="cycles">Cultivos</Tabs.Tab>
           <Tabs.Tab value="operations">Labores</Tabs.Tab>
           <Tabs.Tab value="config">Configuración</Tabs.Tab>
         </Tabs.List>

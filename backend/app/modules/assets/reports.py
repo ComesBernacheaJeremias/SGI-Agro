@@ -25,7 +25,7 @@ from app.modules.production.catalog import report_period
     key="asset_costs",
     title="Costo por activo",
     group="Activos",
-    description="Uso, lo cargado a los ciclos por tarifa y los gastos reales de cada activo.",
+    description="Uso, lo cargado a los cultivos por tarifa y los gastos reales de cada activo.",
     permission=ASSETS_READ,
     filters=[ReportFilter(kind="period", label="Período")],
 )
@@ -63,7 +63,7 @@ def asset_costs_report(db: Session, p: ReportParams) -> TableReport:
             ReportColumn(key="asset", label="Activo"),
             ReportColumn(key="kind", label="Tipo"),
             ReportColumn(key="usage", label="Uso en labores"),
-            ReportColumn(key="rate_cost", label="Cargado a ciclos (tarifa)", kind="money"),
+            ReportColumn(key="rate_cost", label="Cargado a cultivos (tarifa)", kind="money"),
             ReportColumn(key="expenses", label="Gastos (compras y caja)", kind="money"),
             ReportColumn(key="parts", label="Repuestos", kind="money"),
             ReportColumn(key="total", label="Gasto real", kind="money"),

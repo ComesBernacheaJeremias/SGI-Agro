@@ -44,7 +44,7 @@ export function OperationsTab({ onOpen }: Props) {
     { key: 'date', header: 'Fecha', nowrap: true, render: (o) => formatDate(o.date) },
     { key: 'number', header: 'Número', nowrap: true, hideOnMobile: true },
     { key: 'operation_type', header: 'Labor', render: (o) => o.operation_type.name },
-    { key: 'cycles', header: 'Ciclos', render: (o) => o.cycles.join(' / ') },
+    { key: 'cycles', header: 'Cultivos', render: (o) => o.cycles.join(' / ') },
     {
       key: 'total_cost',
       header: 'Costo',
@@ -75,7 +75,7 @@ export function OperationsTab({ onOpen }: Props) {
       filters={
         <>
           <Select
-            placeholder="Ciclo"
+            placeholder="Cultivo"
             data={(cycles?.items ?? []).map((c) => ({ value: c.id, label: c.name }))}
             value={cycleId}
             onChange={reset(setCycleId)}

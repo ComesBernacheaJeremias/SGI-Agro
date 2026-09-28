@@ -2,6 +2,7 @@ import { Button, Menu, Tabs } from '@mantine/core';
 import { IconChevronDown } from '@tabler/icons-react';
 import { useState } from 'react';
 
+import { useOpenAction } from '@/app/actions';
 import { useCan } from '@/app/auth/session';
 import { type Product, productsResource } from '@/modules/masterdata/api';
 import { PageHeader } from '@/shared/ui/PageHeader';
@@ -26,6 +27,16 @@ export function InventoryPage() {
   const [drawer, setDrawer] = useState<{ id: string | null; type: DocumentType } | null>(null);
 
   const allowed = NEW_DOCUMENTS.filter((d) => can(d.permission));
+  const canWrite = can('inventory:write');
+
+  // Enlaces "?abrir=" (manual, tablero, avisos)
+  useOpenAction({
+    stock: () => setTab('stock'),
+    ...(canWrite && {
+      ingreso: () => setDrawer({ id: null, type: 'manual_in' }),
+      egreso: () => setDrawer({ id: null, type: 'manual_out' }),
+    }),
+  });
 
   async function openKardex(productId: string) {
     setKardexProduct(await productsResource.get(productId));

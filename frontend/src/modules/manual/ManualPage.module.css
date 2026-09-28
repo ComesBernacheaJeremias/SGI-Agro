@@ -1,0 +1,39 @@
+/* Manual: lista con líneas finas; la pregunta abierta, en blanco con borde. */
+
+.page {
+  min-height: 100vh;
+  background: var(--app-bg);
+}
+
+.sectionTitle {
+  color: var(--mantine-color-brand-6);
+}
+
+.item {
+  border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.item[data-active] {
+  margin-block: var(--mantine-spacing-xs);
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-white);
+}
+
+.item[data-active] .label {
+  color: var(--mantine-color-brand-6);
+  font-weight: 600;
+}
+
+.control:hover {
+  background: transparent;
+}
+
+.address {
+  padding: 6px 10px;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-sm);
+  background: var(--app-bg);
+  font-family: var(--mantine-font-family-monospace);
+  font-size: var(--mantine-font-size-sm);
+}

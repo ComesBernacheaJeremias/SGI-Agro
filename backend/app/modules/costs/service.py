@@ -91,7 +91,7 @@ class CostQueries:
     def cycle_detail(self, cycle_id: UUID) -> CycleCostOut:
         cycle = self.session.get(CropCycle, cycle_id)
         if cycle is None:
-            raise NotFoundError("No se encontró el ciclo.")
+            raise NotFoundError("No se encontró el cultivo.")
         profit = self.profitability([cycle])[0]
         scope = Scope(cycle_ids=[cycle.id])
         inputs = input_facts(self.session, scope)

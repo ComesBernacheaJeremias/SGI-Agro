@@ -53,7 +53,7 @@ SOURCE = "production"
 def ensure_open(cycle: CropCycle) -> None:
     if cycle.is_finished:
         raise BusinessRuleError(
-            f"El ciclo '{cycle.name}' está finalizado: no se pueden cargar ni modificar sus "
+            f"El cultivo '{cycle.name}' está finalizado: no se pueden cargar ni modificar sus "
             "labores. Si hace falta, pedile a Soporte que lo reabra.",
             code="CYCLE_FINISHED",
         )
@@ -69,7 +69,7 @@ class CycleService:
     def get(self, id_: UUID) -> CropCycle:
         cycle = self.session.get(CropCycle, id_)
         if cycle is None:
-            raise NotFoundError("No se encontró el ciclo.")
+            raise NotFoundError("No se encontró el cultivo.")
         return cycle
 
     def create(self, data: CycleCreate) -> CropCycle:
@@ -78,7 +78,7 @@ class CycleService:
         if plot is None or not plot.is_active:
             raise BusinessRuleError("El lote no existe o está inactivo.", code="PLOT")
         if crop is None or not crop.is_active:
-            raise BusinessRuleError("El cultivo no existe o está inactivo.", code="CROP")
+            raise BusinessRuleError("El tipo de cultivo no existe o está inactivo.", code="CROP")
         self._check_area(plot, data.area_ha, exclude=None)
         self._check_dates(data.start_date, data.expected_end_date)
         season = season_for(self.session, data.start_date)
@@ -123,7 +123,7 @@ class CycleService:
         ensure_open(cycle)
         if end_date < cycle.start_date or end_date > date.today():
             raise BusinessRuleError(
-                "La fecha de fin tiene que estar entre el inicio del ciclo y hoy.",
+                "La fecha de fin tiene que estar entre el inicio del cultivo y hoy.",
                 code="CYCLE_END",
             )
         last = self._last_operation_date(cycle.id)
@@ -144,7 +144,7 @@ class CycleService:
     def reopen(self, id_: UUID, reason: str) -> CropCycle:
         cycle = self.get(id_)
         if not cycle.is_finished:
-            raise BusinessRuleError("El ciclo no está finalizado.", code="CYCLE_NOT_FINISHED")
+            raise BusinessRuleError("El cultivo no está finalizado.", code="CYCLE_NOT_FINISHED")
         self._check_area(cycle.plot, cycle.area_ha, exclude=cycle.id)
         cycle.status = CycleStatus.ACTIVE
         cycle.end_date = None
@@ -170,7 +170,7 @@ class CycleService:
             free = plot.area_ha - used
             raise BusinessRuleError(
                 f"El lote {plot.name} tiene {format_quantity(plot.area_ha)} ha y hay "
-                f"{format_quantity(used)} ha ocupadas por otros ciclos en curso: quedan "
+                f"{format_quantity(used)} ha ocupadas por otros cultivos en curso: quedan "
                 f"{format_quantity(free)} ha libres.",
                 code="PLOT_AREA",
             )
@@ -268,22 +268,22 @@ class FieldOperationService:
             raise BusinessRuleError("El tipo de labor no existe o está inactivo.", code="TYPE")
         ids = [c.crop_cycle_id for c in data.cycles]
         if len(ids) != len(set(ids)):
-            raise BusinessRuleError("Un ciclo está repetido en la labor.", code="DUPLICATE_CYCLE")
+            raise BusinessRuleError("Un cultivo está repetido en la labor.", code="DUPLICATE_CYCLE")
         cycles = []
         for share in data.cycles:
             cycle = self.session.get(CropCycle, share.crop_cycle_id)
             if cycle is None:
-                raise NotFoundError("No se encontró uno de los ciclos.")
+                raise NotFoundError("No se encontró uno de los cultivos.")
             ensure_open(cycle)
             if data.date < cycle.start_date:
                 raise BusinessRuleError(
-                    f"La labor es anterior al inicio del ciclo '{cycle.name}' "
+                    f"La labor es anterior al inicio del cultivo '{cycle.name}' "
                     f"({format_date(cycle.start_date)}).",
                     code="BEFORE_CYCLE",
                 )
             if share.area_ha is not None and share.area_ha > cycle.area_ha:
                 raise BusinessRuleError(
-                    f"La superficie trabajada en '{cycle.name}' supera la del ciclo.",
+                    f"La superficie trabajada en '{cycle.name}' supera la del cultivo.",
                     code="SHARE_AREA",
                 )
             cycles.append(cycle)
@@ -296,7 +296,7 @@ class FieldOperationService:
                 raise BusinessRuleError("Cargá los datos de la cosecha.", code="HARVEST_REQUIRED")
             if len(cycles) != 1:
                 raise BusinessRuleError(
-                    "Una cosecha se carga sobre un solo ciclo.", code="HARVEST_ONE_CYCLE"
+                    "Una cosecha se carga sobre un solo cultivo.", code="HARVEST_ONE_CYCLE"
                 )
         elif data.harvest is not None:
             raise BusinessRuleError(f"'{op_type.name}' no es una cosecha.", code="NOT_HARVEST")

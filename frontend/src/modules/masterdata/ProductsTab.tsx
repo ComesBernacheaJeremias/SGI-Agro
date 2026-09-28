@@ -199,6 +199,7 @@ export function ProductsTab() {
       resource={productsResource}
       columns={columns}
       newLabel="Nuevo producto"
+      openAction="producto"
       canCreate={can('masterdata:write')}
       defaultSort="name"
       searchPlaceholder="Buscar por código o nombre…"

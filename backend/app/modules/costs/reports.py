@@ -60,9 +60,9 @@ def _period(db: Session, p: ReportParams) -> tuple[str, Scope]:
 # --- Rentabilidad ---
 
 PROFIT_GROUPS = {
-    "cycle": "Ciclo",
-    "crop_season": "Cultivo y temporada",
-    "crop": "Cultivo",
+    "cycle": "Cultivo",
+    "crop_season": "Tipo de cultivo y temporada",
+    "crop": "Tipo de cultivo",
     "season": "Temporada",
     "plot": "Lote",
     "farm": "Establecimiento",
@@ -84,17 +84,19 @@ GROUP_KEY: dict[str, Callable[[CycleProfit], tuple[str, str]]] = {
     key="profitability",
     title="Rentabilidad",
     group=GROUP,
-    description="Costos, ingresos y margen por ciclo, cultivo, temporada, lote o establecimiento.",
+    description=(
+        "Costos, ingresos y margen por cultivo, tipo de cultivo, temporada, lote o establecimiento."
+    ),
     permission=COSTS_READ,
     filters=[
         choice("group_by", "Ver por", PROFIT_GROUPS, "cycle"),
         ReportFilter(kind="season", label="Temporada"),
-        ReportFilter(kind="crop", label="Cultivo"),
+        ReportFilter(kind="crop", label="Tipo de cultivo"),
         ReportFilter(kind="farm", label="Establecimiento"),
         ReportFilter(kind="plot", label="Lote"),
         choice(
             "scope",
-            "Ciclos",
+            "Cultivos",
             {"all": "Todos", "active": "En curso", "finished": "Finalizados"},
             "all",
         ),
@@ -176,7 +178,7 @@ def profitability(db: Session, p: ReportParams) -> TableReport:
             rows, ["area", "inputs", "machinery", "expenses", "total", "revenue", "margin"]
         ),
         notes=[
-            "Ingresos: ventas sin IVA de las partidas cosechadas en cada ciclo (las notas de "
+            "Ingresos: ventas sin IVA de las partidas cosechadas en cada cultivo (las notas de "
             "crédito restan). La maquinaria se valoriza por tarifa.",
         ],
     )
@@ -298,8 +300,8 @@ def plot_costs(db: Session, p: ReportParams) -> TableReport:
             _col("area", "Ha", "quantity"),
             _col("inputs", "Insumos"),
             _col("machinery", "Maquinaria"),
-            _col("cycles", "Servicios y gastos de ciclos"),
-            _col("plot_expenses", "Gastos sin asignar a ciclo"),
+            _col("cycles", "Servicios y gastos de cultivos"),
+            _col("plot_expenses", "Gastos sin asignar a cultivo"),
             _col("total", "Total"),
             _col("per_ha", "Costo/ha"),
         ],

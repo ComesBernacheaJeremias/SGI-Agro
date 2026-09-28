@@ -3,6 +3,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { api } from '@/api/client';
+import { useOpenAction } from '@/app/actions';
 import { unwrap } from '@/api/errors';
 import type { components } from '@/api/schema';
 import { type Column, DataTable } from '@/shared/crud/DataTable';
@@ -26,11 +27,11 @@ const TABLES = [
   { value: 'product_categories', label: 'Categorías' },
   { value: 'units', label: 'Unidades' },
   { value: 'stock_documents', label: 'Comprobantes de stock' },
-  { value: 'crop_cycles', label: 'Ciclos' },
+  { value: 'crop_cycles', label: 'Cultivos' },
   { value: 'field_operations', label: 'Labores' },
   { value: 'plots', label: 'Lotes' },
   { value: 'farms', label: 'Establecimientos' },
-  { value: 'crops', label: 'Cultivos' },
+  { value: 'crops', label: 'Tipos de cultivo' },
   { value: 'assets', label: 'Activos' },
   { value: 'recipes', label: 'Recetas' },
   { value: 'production_orders', label: 'Preparaciones' },
@@ -186,10 +187,12 @@ function LoginsTab() {
 
 /** Historial: cambios en los datos y accesos al sistema (dueño y soporte). */
 export function AuditPage() {
+  const [tab, setTab] = useState<string | null>('changes');
+  useOpenAction({ accesos: () => setTab('logins') }); // enlace "?abrir=accesos"
   return (
     <>
       <PageHeader title="Historial" />
-      <Tabs defaultValue="changes" keepMounted={false}>
+      <Tabs value={tab} onChange={setTab} keepMounted={false}>
         <Tabs.List mb="md">
           <Tabs.Tab value="changes">Cambios</Tabs.Tab>
           <Tabs.Tab value="logins">Accesos</Tabs.Tab>

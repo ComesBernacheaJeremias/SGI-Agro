@@ -157,7 +157,7 @@ export function notifyStockAlerts(alerts: StockAlert[]): void {
  */
 export function ownProduceNote(value: string | number, provisional: boolean): string | null {
   if (Number(value) === 0) return null;
-  const detail = provisional ? 'costo del ciclo, provisorio' : 'costo del ciclo';
+  const detail = provisional ? 'costo del cultivo, provisorio' : 'costo del cultivo';
   return `Incluye ${formatMoney(value)} de producción propia (${detail})`;
 }
 

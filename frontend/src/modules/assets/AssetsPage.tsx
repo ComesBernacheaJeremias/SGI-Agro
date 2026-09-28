@@ -186,7 +186,7 @@ export function AssetsPage() {
       align: 'right',
       render: (a) =>
         hasNoRate(a) ? (
-          <Tooltip label="Sin tarifa, su uso en las labores no suma costo a los ciclos">
+          <Tooltip label="Sin tarifa, su uso en las labores no suma costo a los cultivos">
             <Badge color="yellow" variant="light">
               Sin tarifa
             </Badge>
@@ -227,6 +227,7 @@ export function AssetsPage() {
       resource={assetsResource}
       columns={columns}
       newLabel="Nuevo activo"
+      openAction="activo"
       canCreate={can('assets:write')}
       defaultSort="name"
       renderDrawer={(props) => <AssetView {...props} />}

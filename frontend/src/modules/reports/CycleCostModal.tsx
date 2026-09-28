@@ -62,7 +62,7 @@ export function CycleCostModal({ cycleId, onClose }: Props) {
       opened={cycleId !== null}
       onClose={onClose}
       size="xl"
-      title={cycle ? `Costos · ${cycle.name}` : 'Costos del ciclo'}
+      title={cycle ? `Costos · ${cycle.name}` : 'Costos del cultivo'}
     >
       {isLoading && <Loader />}
       {data && cycle && (

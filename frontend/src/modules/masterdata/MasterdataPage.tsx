@@ -1,5 +1,7 @@
 import { Tabs } from '@mantine/core';
+import { useState } from 'react';
 
+import { useActionTab } from '@/app/actions';
 import { PageHeader } from '@/shared/ui/PageHeader';
 
 import { CategoriesTab } from './CategoriesTab';
@@ -17,10 +19,13 @@ const TABS = [
 ];
 
 export function MasterdataPage() {
+  const [tab, setTab] = useState<string | null>('products');
+  // Enlaces "?abrir=": elige la pestaña; el alta la abre la pestaña
+  useActionTab({ producto: 'products', tercero: 'parties' }, setTab);
   return (
     <>
       <PageHeader title="Maestros" />
-      <Tabs defaultValue="products" keepMounted={false}>
+      <Tabs value={tab} onChange={setTab} keepMounted={false}>
         <Tabs.List mb="md">
           {TABS.map((tab) => (
             <Tabs.Tab key={tab.value} value={tab.value}>

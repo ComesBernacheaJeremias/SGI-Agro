@@ -94,6 +94,7 @@ Estados: 📝 Definido · 🔨 En desarrollo · ✅ Implementado · 🚀 En prod
 - [[ADR-023-Endurecimiento-de-seguridad]]
 - [[ADR-024-Sin-carga-offline]]
 - [[ADR-025-Diseno-visual]]
+- [[ADR-026-Cultivo-en-lugar-de-ciclo]]
 
 ### 8. Manual de uso (para el cliente)
 - [[Manual-de-uso]] — página `/manual` del sistema (pública, preguntas "¿Cómo hago…?" con pasos cortos)

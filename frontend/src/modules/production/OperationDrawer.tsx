@@ -179,12 +179,12 @@ export function OperationDrawer({ operationId, harvest, defaultCycleId, opened, 
     if (harvestMode && values.harvest.is_final && cycle && cycle.status === 'active') {
       const finish = await confirmAction({
         title: 'Cosecha final',
-        message: `¿Finalizar el ciclo "${cycle.name}" con fecha ${formatDate(saved.operation.date)}? Sus costos quedan congelados.`,
-        confirmLabel: 'Finalizar ciclo',
+        message: `¿Finalizar el cultivo "${cycle.name}" con fecha ${formatDate(saved.operation.date)}? Sus costos quedan congelados.`,
+        confirmLabel: 'Finalizar cultivo',
       });
       if (finish) {
         await cyclesApi.finish(cycle.crop_cycle_id, saved.operation.date);
-        notifySuccess('Ciclo finalizado.');
+        notifySuccess('Cultivo finalizado.');
         await invalidate();
       }
     }
@@ -251,7 +251,7 @@ export function OperationDrawer({ operationId, harvest, defaultCycleId, opened, 
       )}
       {existing && existing.status === 'active' && !existing.editable && (
         <Alert variant="light">
-          Un ciclo de esta labor está finalizado: no se puede modificar.
+          Un cultivo de esta labor está finalizado: no se puede modificar.
         </Alert>
       )}
       {formError && (
@@ -270,7 +270,7 @@ export function OperationDrawer({ operationId, harvest, defaultCycleId, opened, 
         />
       </SimpleGrid>
       <MultiSelect
-        label={harvestMode ? 'Ciclo' : 'Ciclos'}
+        label={harvestMode ? 'Cultivo' : 'Cultivos'}
         description={
           harvestMode
             ? undefined
@@ -369,7 +369,7 @@ export function OperationDrawer({ operationId, harvest, defaultCycleId, opened, 
               />
             </Group>
             <Checkbox
-              label="¿Es la cosecha final? (ofrece finalizar el ciclo)"
+              label="¿Es la cosecha final? (ofrece finalizar el cultivo)"
               disabled={readOnly}
               {...form.getInputProps('harvest.is_final', { type: 'checkbox' })}
             />

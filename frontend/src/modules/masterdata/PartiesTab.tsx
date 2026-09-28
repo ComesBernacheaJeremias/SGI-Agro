@@ -203,6 +203,7 @@ export function PartiesTab() {
       resource={partiesResource}
       columns={columns}
       newLabel="Nuevo cliente/proveedor"
+      openAction="tercero"
       canCreate={can('masterdata:write')}
       defaultSort="name"
       searchPlaceholder="Buscar por nombre o CUIT…"

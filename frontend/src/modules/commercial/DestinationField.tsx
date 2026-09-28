@@ -47,10 +47,10 @@ export function DestinationField({ value, onChange, disabled }: Props) {
   }));
   // Un ciclo finalizado no aparece en la lista, pero si ya estaba cargado se muestra igual
   if (value.crop_cycle_id && !cycleItems.some((i) => i.value === current)) {
-    cycleItems.push({ value: current as string, label: 'Ciclo finalizado' });
+    cycleItems.push({ value: current as string, label: 'Cultivo finalizado' });
   }
   const data = [
-    { group: 'Ciclos en curso', items: cycleItems },
+    { group: 'Cultivos en curso', items: cycleItems },
     {
       group: 'Lotes',
       items: plots.map((p) => ({ value: `plot:${p.id}`, label: `${p.farm.name} · ${p.name}` })),

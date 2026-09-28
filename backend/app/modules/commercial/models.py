@@ -353,7 +353,7 @@ class CashMovement(BaseModel):
     )
     plot_id: Mapped[UUID | None] = mapped_column(ForeignKey("plots.id"), info={"label": "Lote"})
     crop_cycle_id: Mapped[UUID | None] = mapped_column(
-        ForeignKey("crop_cycles.id"), index=True, info={"label": "Ciclo"}
+        ForeignKey("crop_cycles.id"), index=True, info={"label": "Cultivo"}
     )
     asset_id: Mapped[UUID | None] = mapped_column(ForeignKey("assets.id"), info={"label": "Activo"})
     status: Mapped[Status] = mapped_column(

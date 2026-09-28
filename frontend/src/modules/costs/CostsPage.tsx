@@ -1,6 +1,7 @@
 import { Loader, Tabs } from '@mantine/core';
 import { useState } from 'react';
 
+import { useOpenAction } from '@/app/actions';
 import type { ReportLink } from '@/modules/reports/api';
 import { useReportCatalog } from '@/modules/reports/api';
 import { LinkedRecord } from '@/modules/reports/LinkedRecord';
@@ -19,12 +20,18 @@ const TABS = [
 export function CostsPage() {
   const { data: catalog } = useReportCatalog();
   const [link, setLink] = useState<ReportLink | null>(null);
+  const [tab, setTab] = useState<string | null>('profitability');
+  // Enlaces "?abrir=" (manual, tablero, avisos)
+  useOpenAction({
+    rentabilidad: () => setTab('profitability'),
+    resultado: () => setTab('management_result'),
+  });
   return (
     <>
       <PageHeader title="Costos y rentabilidad" />
       {!catalog && <Loader />}
       {catalog && (
-        <Tabs defaultValue="profitability" keepMounted={false}>
+        <Tabs value={tab} onChange={setTab} keepMounted={false}>
           <Tabs.List mb="md">
             {TABS.map((t) => (
               <Tabs.Tab key={t.key} value={t.key}>

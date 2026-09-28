@@ -9,17 +9,17 @@ import { formatMoney } from '@/shared/format/number';
 type Props = { value: string | number; provisional: boolean };
 
 const HELP =
-  'Según el costo de su ciclo (costo ÷ cosechado). Solo informativo: no es costo contable.';
-const PROVISIONAL_HELP = ' Provisorio: el ciclo sigue en curso y el costo puede cambiar.';
+  'Según el costo de su cultivo (costo ÷ cosechado). Solo informativo: no es costo contable.';
+const PROVISIONAL_HELP = ' Provisorio: el cultivo sigue en curso y el costo puede cambiar.';
 
-/** "$ 2.000,00 costo del ciclo · provisorio" con la explicación al pasar el mouse. */
+/** "$ 2.000,00 costo del cultivo · provisorio" con la explicación al pasar el mouse. */
 export function EstimatedValue({ value, provisional }: Props) {
   return (
     <Tooltip label={HELP + (provisional ? PROVISIONAL_HELP : '')} multiline w={280}>
       <span style={{ whiteSpace: 'nowrap' }}>
         {formatMoney(value)}{' '}
         <Text span size="xs" c="dimmed">
-          {provisional ? 'costo del ciclo · provisorio' : 'costo del ciclo'}
+          {provisional ? 'costo del cultivo · provisorio' : 'costo del cultivo'}
         </Text>
       </span>
     </Tooltip>

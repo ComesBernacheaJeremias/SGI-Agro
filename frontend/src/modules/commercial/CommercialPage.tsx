@@ -1,6 +1,7 @@
 import { Button, Tabs } from '@mantine/core';
 import { Fragment, useState } from 'react';
 
+import { useActionTab, useOpenAction } from '@/app/actions';
 import { useCan } from '@/app/auth/session';
 import { PageHeader } from '@/shared/ui/PageHeader';
 
@@ -37,17 +38,38 @@ export function CommercialPage() {
   const [payment, setPayment] = useState<PaymentState | null>(null);
 
   const action = NEW_ACTION[tab];
-  function openNew() {
-    if (!action) return;
-    if (action.kind === 'document') setDocument({ direction: action.direction, id: null });
-    else setPayment({ direction: action.direction, id: null });
+  function openNew(target: Tab = tab) {
+    const next = NEW_ACTION[target];
+    if (!next) return;
+    if (next.kind === 'document') setDocument({ direction: next.direction, id: null });
+    else setPayment({ direction: next.direction, id: null });
   }
+  /** Va a la pestaña y abre su alta (enlaces "?abrir="). */
+  const openIn = (target: Tab) => () => {
+    setTab(target);
+    openNew(target);
+  };
+
+  // Enlaces "?abrir=" (manual, tablero, avisos). "movimiento" lo atiende la pestaña de caja.
+  useOpenAction({
+    ...(canRead && {
+      'cuentas-corrientes': () => setTab('accounts'),
+      ...(canWrite && {
+        compra: openIn('purchases'),
+        venta: openIn('sales'),
+        cobro: openIn('receipts'),
+        pago: openIn('payments'),
+      }),
+    }),
+    ...(canCash && { caja: () => setTab('cash') }),
+  });
+  useActionTab<Tab>(canCash ? { movimiento: 'cash' } : {}, setTab);
 
   return (
     <>
       <PageHeader
         title="Comercial y caja"
-        actions={action && canWrite && <Button onClick={openNew}>{action.label}</Button>}
+        actions={action && canWrite && <Button onClick={() => openNew()}>{action.label}</Button>}
       />
       <Tabs value={tab} onChange={(v) => setTab((v ?? 'sales') as Tab)} keepMounted={false}>
         <Tabs.List mb="md">

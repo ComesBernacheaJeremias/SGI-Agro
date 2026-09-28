@@ -64,5 +64,5 @@ def stock_valued(db: Session, p: ReportParams) -> TableReport:
         ],
         rows=rows,
         totals={"value": sum_rows(rows, ["value"])["value"] or Decimal(0)},
-        notes=["La producción propia entra al stock a costo 0 (su costo está en el ciclo)."],
+        notes=["La producción propia entra al stock a costo 0 (su costo está en el cultivo)."],
     )

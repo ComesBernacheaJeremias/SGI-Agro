@@ -12,8 +12,8 @@ Si aparece un término nuevo, **agregarlo acá antes de usarlo en código**.
 |---|---|---|
 | Establecimiento | `farm` | Campo / finca. Contiene lotes. |
 | Lote | `plot` | Parcela de un establecimiento con superficie en ha. Tipo: campo abierto, invernadero o forestal. **No confundir con Partida.** |
-| Cultivo | `crop` | Especie + variedad (tomate perita, manzana red, pino). Indica qué producto se cosecha. |
-| Ciclo productivo | `crop_cycle` | Un cultivo en (parte de) un lote entre fecha de inicio y fin. Estados: en curso → finalizado (reabrir: solo Soporte). Acumula los costos. Ver [[ADR-013-Ciclo-productivo-y-temporada]]. |
+| Tipo de cultivo | `crop` | Especie + variedad (tomate perita, manzana red, pino). Indica qué producto se cosecha. En pantalla: **"Tipo de cultivo"** (antes "Cultivo", [[ADR-026-Cultivo-en-lugar-de-ciclo]]). |
+| Cultivo (ciclo productivo) | `crop_cycle` | Un tipo de cultivo en (parte de) un lote entre fecha de inicio y fin. Estados: en curso → finalizado (reabrir: solo Soporte). Acumula los costos. Ver [[ADR-013-Ciclo-productivo-y-temporada]]. En pantalla: **"Cultivo"**; en el código y la documentación técnica sigue siendo "ciclo" (`crop_cycle`) ([[ADR-026-Cultivo-en-lugar-de-ciclo]]). |
 | Temporada | `season` | Período 1/7 → 30/6, igual para toda la empresa. Los movimientos caen en una temporada según su fecha. |
 | Labor | `field_operation` | Trabajo en un ciclo (preparación de suelo, siembra, trasplante, aplicación, riego, poda, cosecha, tala…), con insumos y maquinaria. |
 | Tipo de labor | `operation_type` | Catálogo configurable de labores. |

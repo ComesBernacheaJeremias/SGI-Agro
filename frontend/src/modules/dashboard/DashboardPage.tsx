@@ -29,7 +29,13 @@ function Card({ title, to, children }: { title: string; to: string; children: Re
 function Kpi({ label, value, note }: KpiProps) {
   return (
     <InfoCard title={label}>
-      <Text fw={700} fz={26} lh={1.1} c={value < 0 ? 'red.7' : undefined}>
+      <Text
+        fw={700}
+        fz={{ base: 22, sm: 26 }}
+        lh={1.1}
+        c={value < 0 ? 'red.7' : undefined}
+        style={{ whiteSpace: 'nowrap' }}
+      >
         {formatMoney(value)}
       </Text>
       {note && (
@@ -49,7 +55,7 @@ function Figure({ label, value, color }: { label: string; value: string; color?:
       <Text size="xs" c="dimmed">
         {label}
       </Text>
-      <Text fw={700} size="lg" c={color}>
+      <Text fw={700} size="lg" c={color} style={{ whiteSpace: 'nowrap' }}>
         {value}
       </Text>
     </Stack>
@@ -123,8 +129,9 @@ export function DashboardPage() {
       />
       {isLoading && <Loader />}
       {empty && <Text c="dimmed">No hay información para mostrar con tus permisos.</Text>}
+      {/* Celular: una columna, así el número entra en una línea (montos de millones incluidos) */}
       {kpis.length > 0 && (
-        <SimpleGrid cols={{ base: 2, md: kpis.length }} mb="md">
+        <SimpleGrid cols={{ base: 1, xs: 2, md: kpis.length }} mb="md">
           {kpis.map((kpi) => (
             <Kpi key={kpi.label} {...kpi} />
           ))}
@@ -138,9 +145,9 @@ export function DashboardPage() {
             </Card>
           )}
           {data.cycles && (
-            <Card title="Ciclos en curso" to="/produccion">
+            <Card title="Cultivos en curso" to="/produccion">
               <Group mb="xs">
-                <Figure label="Ciclos" value={String(data.cycles.active)} />
+                <Figure label="Cultivos" value={String(data.cycles.active)} />
                 <Figure label="Costo acumulado" value={formatMoney(data.cycles.total_cost)} />
               </Group>
               {data.cycles.top.map((c) => (

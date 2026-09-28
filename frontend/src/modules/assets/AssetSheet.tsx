@@ -359,7 +359,7 @@ export function AssetSheet({ asset, onClose, onEdit }: Props) {
               <Figure
                 label="Gasto real"
                 value={formatMoney(costs.total)}
-                hint={`Cargado a ciclos: ${formatMoney(costs.rate_cost)}`}
+                hint={`Cargado a cultivos: ${formatMoney(costs.rate_cost)}`}
               />
               <Figure
                 label={`Costo real ${meterRate(unit)}`}

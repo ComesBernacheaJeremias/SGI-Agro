@@ -17,7 +17,8 @@ export function RequireAuth({ children }: { children: ReactNode }) {
     );
   }
   if (session.status === 'anonymous') {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+    // Con la búsqueda (?abrir=…): después de entrar se abre lo que se pidió
+    return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />;
   }
   return children;
 }

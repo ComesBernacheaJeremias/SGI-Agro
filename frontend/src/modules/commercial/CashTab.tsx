@@ -16,6 +16,7 @@ import { useForm } from '@mantine/form';
 import dayjs from 'dayjs';
 import { Fragment, useEffect, useState } from 'react';
 
+import { useOpenAction } from '@/app/actions';
 import { useCan } from '@/app/auth/session';
 import { labelOf, useActiveList } from '@/modules/masterdata/api';
 import { DateInput } from '@/shared/components/DateInput';
@@ -315,6 +316,7 @@ export function CashTab() {
   const { data, isFetching } = useMovements({ page: list.page, page_size: 50 });
   const [drawer, setDrawer] = useState<{ record: CashMovement | null } | null>(null);
   const [account, setAccount] = useState<{ id: string; name: string } | null>(null);
+  useOpenAction(can('cash:write') ? { movimiento: () => setDrawer({ record: null }) } : {});
 
   const columns: Column<CashMovement>[] = [
     { key: 'date', header: 'Fecha', nowrap: true, render: (m) => formatDate(m.date) },

@@ -24,7 +24,7 @@ def resolve_destination(session: Session, dest: Destination) -> dict[str, UUID |
     if dest.crop_cycle_id:
         cycle = session.get(CropCycle, dest.crop_cycle_id)
         if cycle is None:
-            raise NotFoundError("No se encontró el ciclo de destino.")
+            raise NotFoundError("No se encontró el cultivo de destino.")
         ensure_open(cycle)
         plot_id, farm_id = cycle.plot_id, cycle.plot.farm_id
     elif plot_id:

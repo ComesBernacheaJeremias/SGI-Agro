@@ -296,6 +296,7 @@ export function RecipesTab() {
       resource={recipesResource}
       columns={columns}
       newLabel="Nueva receta"
+      openAction="receta"
       canCreate={canWrite}
       defaultSort="name"
       renderDrawer={(props) => <RecipeDrawer {...props} />}

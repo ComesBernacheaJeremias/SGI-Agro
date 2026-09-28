@@ -93,9 +93,9 @@ export function toBody(values: OperationValues, isHarvest: boolean): OperationIn
 /** Mensaje de validación del formulario (null = ok). */
 export function validateOperation(values: OperationValues, isHarvest: boolean): string | null {
   if (!values.date || !values.operation_type_id) return 'Completá fecha y tipo de labor.';
-  if (values.cycle_ids.length === 0) return 'Elegí al menos un ciclo.';
+  if (values.cycle_ids.length === 0) return 'Elegí al menos un cultivo.';
   if (isHarvest && values.cycle_ids.length !== 1)
-    return 'Una cosecha se carga sobre un solo ciclo.';
+    return 'Una cosecha se carga sobre un solo cultivo.';
   if (values.inputs.some((i) => !i.product || !i.unit_id || !i.value || !i.warehouse_id))
     return 'Completá producto, unidad, cantidad y almacén de cada insumo.';
   if (values.assets.some((a) => !a.asset_id || !a.usage))

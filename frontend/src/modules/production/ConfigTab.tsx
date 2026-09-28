@@ -205,7 +205,7 @@ function CropDrawer({ record, opened, onClose }: DrawerProps<Crop>) {
     <EntityDrawer
       opened={opened}
       onClose={onClose}
-      title={record ? record.name : 'Nuevo cultivo'}
+      title={record ? record.name : 'Nuevo tipo de cultivo'}
       form={form}
       isEdit={record !== null}
       onSubmit={submit}
@@ -350,7 +350,7 @@ export function ConfigTab() {
     },
   ];
   const cropColumns: Column<Crop>[] = [
-    { key: 'name', header: 'Cultivo', sortable: true },
+    { key: 'name', header: 'Tipo de cultivo', sortable: true },
     { key: 'kind', header: 'Tipo', render: (c) => labelOf(options?.crop_kinds, c.kind) },
     {
       key: 'harvest_product',
@@ -371,7 +371,7 @@ export function ConfigTab() {
       <Tabs.List mb="md">
         <Tabs.Tab value="plots">Lotes</Tabs.Tab>
         <Tabs.Tab value="farms">Establecimientos</Tabs.Tab>
-        <Tabs.Tab value="crops">Cultivos</Tabs.Tab>
+        <Tabs.Tab value="crops">Tipos de cultivo</Tabs.Tab>
         <Tabs.Tab value="types">Tipos de labor</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="plots">
@@ -398,7 +398,7 @@ export function ConfigTab() {
         <CrudTab
           resource={cropsResource}
           columns={cropColumns}
-          newLabel="Nuevo cultivo"
+          newLabel="Nuevo tipo de cultivo"
           canCreate={canWrite}
           defaultSort="name"
           renderDrawer={(p) => <CropDrawer {...p} />}

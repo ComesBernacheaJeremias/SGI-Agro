@@ -16,7 +16,9 @@ Se actualiza al cerrar cada etapa a partir de los commits (Conventional Commits)
 - Diseño visual propio (paleta "Monte"): menú oscuro agrupado, tablero con números clave, login nuevo, fuente IBM Plex Sans, color solo con significado, sin íconos en botones con texto.
 - Logo propio (parcelas en molinete) en el menú, el login, los íconos de la app y el favicon.
 - Montos negativos como `-$ 57.500,00`; faltantes de stock solo por debajo del mínimo (no igual).
-- Producción propia en stock valorizada por el costo de su ciclo (solo informativo, "provisorio" si el ciclo sigue en curso) en Inventario y el tablero.
+- Producción propia en stock valorizada por el costo de su cultivo (solo informativo, "provisorio" si el cultivo sigue en curso) en Inventario y el tablero.
+- En pantalla se dice **"cultivo"** (antes "ciclo") y **"tipo de cultivo"** (antes "cultivo"), también en reportes, Excel, PDF e Historial.
+- Manual renovado: temas nuevos, buscador con palabras del campo, botones que abren el formulario y "?" en cada pantalla.
 - Ventas/compras: filtro "Vencidas" y columna Estado. Activos: estado, mantenimiento y aviso "Sin tarifa". Inventario: valor total real (todas las páginas). Historial con "antes → después". Botón principal siempre en el mismo lugar; scroll horizontal solo en tablas.
 
 ### Removed

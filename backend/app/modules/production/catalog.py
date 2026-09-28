@@ -140,7 +140,7 @@ class PlotService(CrudService[Plot, PlotCreate, PlotUpdate]):
             )
         if obj.id and obj.area_ha < active_cycles_area(self.session, obj.id):
             raise BusinessRuleError(
-                "La superficie no puede ser menor a la ocupada por los ciclos en curso.",
+                "La superficie no puede ser menor a la ocupada por los cultivos en curso.",
                 code="PLOT_AREA",
             )
 
@@ -181,8 +181,8 @@ class CropRepository(CrudRepository[Crop]):
 
 class CropService(CrudService[Crop, CropCreate, CropUpdate]):
     repository_class = CropRepository
-    unique_fields = {"name": "Ya existe el cultivo '{value}'."}  # noqa: RUF012
-    not_found_message = "No se encontró el cultivo."
+    unique_fields = {"name": "Ya existe el tipo de cultivo '{value}'."}  # noqa: RUF012
+    not_found_message = "No se encontró el tipo de cultivo."
 
     def validate(self, obj: Crop) -> None:
         obj.name = f"{obj.species} {obj.variety}".strip()

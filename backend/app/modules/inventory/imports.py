@@ -118,6 +118,6 @@ define_import(
         ],
         handle_row=_row,
         finish=_finish,
-        notes=["La producción propia puede ir con costo 0 (su costo está en los ciclos)."],
+        notes=["La producción propia puede ir con costo 0 (su costo está en los cultivos)."],
     )
 )

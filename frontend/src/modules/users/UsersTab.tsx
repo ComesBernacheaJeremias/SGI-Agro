@@ -29,6 +29,7 @@ export function UsersTab() {
       resource={usersResource}
       columns={COLUMNS}
       newLabel="Nuevo usuario"
+      openAction="usuario"
       canCreate={canManage}
       defaultSort="full_name"
       searchPlaceholder="Buscar por nombre o usuario…"

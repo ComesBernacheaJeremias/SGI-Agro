@@ -1,6 +1,7 @@
 import { Badge, Button, Tabs } from '@mantine/core';
 import { useState } from 'react';
 
+import { useActionTab, useOpenAction } from '@/app/actions';
 import { useCan } from '@/app/auth/session';
 import { type Column, DataTable } from '@/shared/crud/DataTable';
 import { useListState } from '@/shared/crud/hooks';
@@ -59,6 +60,10 @@ function OrdersTab({ onOpen }: { onOpen: (order: Order) => void }) {
 export function ManufacturingPage() {
   const canWrite = useCan()('manufacturing:write');
   const [order, setOrder] = useState<{ record: Order | null } | null>(null);
+  const [tab, setTab] = useState<string | null>('orders');
+  // Enlaces "?abrir=": la preparación la abre esta pantalla; la receta, su pestaña
+  useOpenAction(canWrite ? { preparacion: () => setOrder({ record: null }) } : {});
+  useActionTab({ receta: 'recipes' }, setTab);
   return (
     <>
       <PageHeader
@@ -67,7 +72,7 @@ export function ManufacturingPage() {
           canWrite && <Button onClick={() => setOrder({ record: null })}>Nueva preparación</Button>
         }
       />
-      <Tabs defaultValue="orders" keepMounted={false}>
+      <Tabs value={tab} onChange={setTab} keepMounted={false}>
         <Tabs.List mb="md">
           <Tabs.Tab value="orders">Preparaciones</Tabs.Tab>
           <Tabs.Tab value="recipes">Recetas</Tabs.Tab>

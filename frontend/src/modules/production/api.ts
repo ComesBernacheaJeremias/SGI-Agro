@@ -40,7 +40,7 @@ export const plotsResource = createCrudResource<Plot, S['PlotCreate'], S['PlotUp
 export const cropsResource = createCrudResource<Crop, S['CropCreate'], S['CropUpdate']>({
   path: '/api/v1/crops',
   key: 'crops',
-  label: 'cultivo',
+  label: 'tipo de cultivo',
   table: 'crops',
 });
 export const operationTypesResource = createCrudResource<
