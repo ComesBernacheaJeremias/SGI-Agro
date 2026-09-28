@@ -10,6 +10,7 @@ import { useCan, useSession } from '@/app/auth/session';
 import { NAV_ITEMS, NAV_SECTIONS } from '@/app/navigation';
 import { MaintenanceBell } from '@/modules/assets/MaintenanceBell';
 import { StockAlertsBell } from '@/modules/inventory/StockAlertsBell';
+import { Logo } from '@/shared/ui/Logo';
 
 import classes from './AppLayout.module.css';
 import { OfflineBadge } from './OfflineBadge';
@@ -45,7 +46,7 @@ export function AppLayout() {
         <Group h="100%" px="md" justify="space-between">
           <Group gap="sm" hiddenFrom="sm">
             <Burger opened={menuOpen} onClick={toggle} size="sm" aria-label="Menú" />
-            <Text className={classes.headerBrand}>SGI Agro</Text>
+            <Logo on="light" height={26} />
           </Group>
           <Group gap="xs" ml="auto">
             <OfflineBadge />
@@ -72,7 +73,9 @@ export function AppLayout() {
       </AppShell.Header>
 
       <AppShell.Navbar p="xs" pt={0} className={classes.navbar}>
-        <div className={classes.brand}>SGI Agro</div>
+        <div className={classes.brand}>
+          <Logo on="dark" height={30} />
+        </div>
         {NAV_SECTIONS.map((section) => {
           const items = NAV_ITEMS.filter(
             (item) => item.section === section.key && (!item.permission || can(item.permission)),

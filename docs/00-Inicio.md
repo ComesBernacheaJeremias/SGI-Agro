@@ -15,7 +15,7 @@ actualizado: 2026-09-28
 
 ## Próximos pasos
 1. **Git:** el usuario sube todo lo pendiente: seguridad, ajustes de la prueba en Chrome, baja de la carga sin conexión, diseño visual y valorización de la producción propia (ver bitácora 28/09). El código está en GitHub: [SGI-Agro](https://github.com/ComesBernacheaJeremias/SGI-Agro) (rama `main`; el usuario ejecuta los comandos de git). Opcional: `pre-commit install`.
-2. **Probar en Chrome** (con permiso del usuario) los ajustes del 27/09, que las altas guarden normal sin la cola y el diseño nuevo (también en celular); el usuario sigue probando F1–F7. **Logo**: el usuario lo busca con los colores de [[ADR-025-Diseno-visual]]; después va en el menú, el login y los íconos de la app.
+2. **Probar en Chrome** (con permiso del usuario) los ajustes del 27/09, que las altas guarden normal sin la cola y el diseño nuevo (también en celular); el usuario sigue probando F1–F7. **Logo** hecho y aplicado (menú, login, íconos, favicon): ver [[Marca]].
 3. **Deploy real** ([[Entorno-local-y-deploy]]): cuando estén cuenta de DigitalOcean, dominio y, opcional, Sentry (GitHub ya está).
 4. **Arranque con el cliente** ([[Puesta-en-marcha]]): demo con `seed-demo`, el manual en `/manual` ([[Manual-de-uso]]), carga inicial por Excel. Decisiones de F7 (27/09): orden Excel → sin conexión → servidor → manual; se importan productos, terceros, stock inicial y saldos; PostgreSQL en el mismo droplet (2 GB) con backups a Spaces. Pendiente del usuario/cliente: cuenta DigitalOcean, dominio, Sentry.
 

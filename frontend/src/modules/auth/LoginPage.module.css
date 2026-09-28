@@ -28,12 +28,6 @@
   color: var(--app-panel-text);
 }
 
-.name {
-  font-size: var(--mantine-font-size-xl);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
 .claim {
   max-width: 460px;
   font-size: clamp(1.6rem, 3vw, 2.4rem);

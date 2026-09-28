@@ -14,7 +14,8 @@ export default defineConfig({
     // App instalable (ícono en el celular o la PC). Sin carga sin conexión: ADR-024.
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['apple-touch-icon.png'],
+      // Íconos y favicon: generados en docs/assets/marca (ver Marca.md)
+      includeAssets: ['apple-touch-icon.png', 'favicon.svg', 'favicon-32.png'],
       manifest: {
         name: 'SGI Agro',
         short_name: 'SGI Agro',
@@ -22,8 +23,8 @@ export default defineConfig({
         lang: 'es-AR',
         start_url: '/',
         display: 'standalone',
-        theme_color: '#2F6B3F',
-        background_color: '#ffffff',
+        theme_color: '#16362A',
+        background_color: '#16362A',
         icons: [
           { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },

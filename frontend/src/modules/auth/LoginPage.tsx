@@ -15,6 +15,7 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { errorMessage } from '@/api/errors';
 import { login } from '@/app/auth/auth';
 import { useSession } from '@/app/auth/session';
+import { Logo } from '@/shared/ui/Logo';
 
 import classes from './LoginPage.module.css';
 
@@ -48,7 +49,10 @@ export function LoginPage() {
   return (
     <div className={classes.layout}>
       <div className={classes.panel}>
-        <div className={classes.name}>SGI Agro</div>
+        {/* En un div: si el panel (flex) estira la imagen, el SVG se centra */}
+        <div>
+          <Logo on="dark" height={40} />
+        </div>
         <div>
           <div className={classes.claim}>Costos y rentabilidad del campo, en un solo lugar.</div>
           <Text className={classes.detail} mt="md" maw={420}>

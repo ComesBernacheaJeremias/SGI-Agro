@@ -22,6 +22,8 @@ El sistema usaba Mantine casi sin personalizar (verde estándar, fuente del sist
 - **Montos negativos:** `-$ 57.500,00` (frontend `formatMoney` y backend `format_money`).
 - **Faltantes de stock:** solo si hay **menos** que el mínimo (antes también si era igual).
 
+- **Logo** (28/09): cuatro parcelas en molinete con la de abajo a la derecha en terracota, texto en IBM Plex Sans SemiBold. Archivos, geometría y usos en [[Marca]] (`docs/assets/marca/`).
+
 ## Alternativas descartadas
 - **A · Campo** (oliva y ocre, menú claro): el usuario prefirió la B.
 - **Color por módulo** (franjas e íconos de colores distintos): se probó y se sacó; distraía y no significaba nada.
