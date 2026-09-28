@@ -1,5 +1,4 @@
 import { Badge, Button, Tabs } from '@mantine/core';
-import { IconFlask } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { useCan } from '@/app/auth/session';
@@ -17,8 +16,8 @@ function OrdersTab({ onOpen }: { onOpen: (order: Order) => void }) {
   const list = useListState();
   const { data, isFetching } = useOrders({ page: list.page, page_size: 50 });
   const columns: Column<Order>[] = [
-    { key: 'date', header: 'Fecha', render: (o) => formatDate(o.date) },
-    { key: 'number', header: 'Número', hideOnMobile: true },
+    { key: 'date', header: 'Fecha', nowrap: true, render: (o) => formatDate(o.date) },
+    { key: 'number', header: 'Número', nowrap: true, hideOnMobile: true },
     { key: 'recipe', header: 'Producto', render: (o) => o.recipe.name },
     {
       key: 'quantity',
@@ -65,14 +64,7 @@ export function ManufacturingPage() {
       <PageHeader
         title="Elaboración"
         actions={
-          canWrite && (
-            <Button
-              leftSection={<IconFlask size={16} />}
-              onClick={() => setOrder({ record: null })}
-            >
-              Nueva preparación
-            </Button>
-          )
+          canWrite && <Button onClick={() => setOrder({ record: null })}>Nueva preparación</Button>
         }
       />
       <Tabs defaultValue="orders" keepMounted={false}>

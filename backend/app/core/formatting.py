@@ -23,7 +23,9 @@ def format_quantity(value: Decimal) -> str:
 
 
 def format_money(value: Decimal) -> str:
-    return f"$ {_format(value, 2, 2)}"
+    """$ 1.234,56 · negativos: -$ 1.234,56"""
+    text = _format(value, 2, 2)
+    return f"-$ {text[1:]}" if text.startswith("-") else f"$ {text}"
 
 
 def format_date(value: date) -> str:

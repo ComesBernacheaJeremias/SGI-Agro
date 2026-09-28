@@ -1,7 +1,8 @@
-import { Badge, Select, SimpleGrid, Textarea, TextInput } from '@mantine/core';
+import { Select, SimpleGrid, Textarea, TextInput } from '@mantine/core';
 
 import { useCan } from '@/app/auth/session';
 import { NumberInput } from '@/shared/components/NumberInput';
+import { activeColumn } from '@/shared/crud/columns';
 import { CrudTab, type DrawerProps } from '@/shared/crud/CrudTab';
 import type { Column } from '@/shared/crud/DataTable';
 import { EntityDrawer } from '@/shared/crud/EntityDrawer';
@@ -180,7 +181,7 @@ export function ProductsTab() {
   const [categoryId, setCategoryId] = useState<string | null>(null);
 
   const columns: Column<Product>[] = [
-    { key: 'code', header: 'Código', sortable: true },
+    { key: 'code', header: 'Código', nowrap: true, sortable: true },
     { key: 'name', header: 'Nombre', sortable: true },
     { key: 'type', header: 'Tipo', render: (p) => labelOf(options?.product_types, p.type) },
     {
@@ -190,17 +191,7 @@ export function ProductsTab() {
       render: (p) => p.category?.name ?? '—',
     },
     { key: 'unit', header: 'Unidad', render: (p) => p.unit.code },
-    {
-      key: 'is_active',
-      header: 'Estado',
-      hideOnMobile: true,
-      render: (p) =>
-        !p.is_active && (
-          <Badge color="gray" variant="light">
-            Inactivo
-          </Badge>
-        ),
-    },
+    { ...activeColumn<Product>(), hideOnMobile: true },
   ];
 
   return (

@@ -383,6 +383,15 @@ def test_pending_filter_lists_only_unpaid(shop: Shop) -> None:
     assert [i["invoice_label"] for i in items] == ["Factura A 00003-00000124"]
 
 
+def test_overdue_filter_lists_only_unpaid_past_due(shop: Shop) -> None:
+    created(shop.buy_poison("1", "1000", number="200", date=day(-50), due_date=day(-40)))
+    created(shop.buy_poison("1", "1000", number="201"))  # vence en 30 días
+    items = shop.c.get(
+        "/api/v1/commercial-documents", params={"direction": "purchase", "only_overdue": True}
+    ).json()["items"]
+    assert [i["invoice_label"] for i in items] == ["Factura A 00003-00000200"]
+
+
 # --- Caja y bancos ---
 
 

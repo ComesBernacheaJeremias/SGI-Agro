@@ -3,8 +3,6 @@ import { createBrowserRouter } from 'react-router-dom';
 
 import { RequireAuth } from '@/app/auth/RequireAuth';
 import { AppLayout } from '@/app/layout/AppLayout';
-import { ComingSoonPage } from '@/app/layout/ComingSoonPage';
-import { NAV_ITEMS } from '@/app/navigation';
 import { AssetsPage } from '@/modules/assets/AssetsPage';
 import { AuditPage } from '@/modules/audit/AuditPage';
 import { LoginPage } from '@/modules/auth/LoginPage';
@@ -21,7 +19,7 @@ import { ProfilePage } from '@/modules/profile/ProfilePage';
 import { ReportsPage } from '@/modules/reports/ReportsPage';
 import { UsersPage } from '@/modules/users/UsersPage';
 
-// Pantallas implementadas; el resto de los ítems del menú muestra "Próximamente".
+// Pantalla de cada ítem del menú (ver navigation.ts)
 const PAGES: Record<string, ReactNode> = {
   '/': <DashboardPage />,
   '/costos': <CostsPage />,
@@ -37,10 +35,7 @@ const PAGES: Record<string, ReactNode> = {
   '/historial': <AuditPage />,
 };
 
-const moduleRoutes = NAV_ITEMS.map((item) => ({
-  path: item.path,
-  element: PAGES[item.path] ?? <ComingSoonPage item={item} />,
-}));
+const moduleRoutes = Object.entries(PAGES).map(([path, element]) => ({ path, element }));
 
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },

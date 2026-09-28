@@ -10,7 +10,7 @@ import {
   Text,
   Textarea,
 } from '@mantine/core';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconTrash } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 
 import { FormError } from '@/api/errors';
@@ -116,7 +116,6 @@ function ComponentsField({
           variant="light"
           size="xs"
           w="fit-content"
-          leftSection={<IconPlus size={14} />}
           onClick={() => onChange([...value, newComponent()])}
         >
           Agregar componente

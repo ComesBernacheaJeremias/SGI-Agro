@@ -8,7 +8,7 @@ import type { components } from '@/api/schema';
 import { type Column, DataTable } from '@/shared/crud/DataTable';
 import { useListState } from '@/shared/crud/hooks';
 import { DateInput } from '@/shared/components/DateInput';
-import { formatAuditValue } from '@/shared/format/audit';
+import { formatChange } from '@/shared/format/audit';
 import { formatDate } from '@/shared/format/date';
 import { PageHeader } from '@/shared/ui/PageHeader';
 
@@ -55,16 +55,53 @@ const ACTIONS = [
 
 const actionLabel = (code: string) => ACTIONS.find((a) => a.value === code)?.label ?? code;
 
+/** Cambios que entran en la fila; el resto se ve tocándola. */
+const CHANGES_IN_ROW = 3;
+
+/**
+ * Modificaciones: "campo: antes → después"; altas: solo cuántos datos (el detalle, tocando la
+ * fila); otras acciones (anular, desactivar…): los campos, que son pocos.
+ */
+function ChangesCell({ entry }: { entry: Entry }) {
+  if (entry.action === 'create')
+    return (
+      <Text size="sm" c="dimmed">
+        Alta con {entry.changes.length} datos
+      </Text>
+    );
+  if (entry.action !== 'update') return entry.changes.map((c) => c.label).join(', ');
+  const hidden = entry.changes.length - CHANGES_IN_ROW;
+  return (
+    <Stack gap={0}>
+      {entry.changes.slice(0, CHANGES_IN_ROW).map((c) => (
+        <Text size="sm" key={c.field}>
+          {formatChange(c, entry.action)}
+        </Text>
+      ))}
+      {hidden > 0 && (
+        <Text size="sm" c="dimmed">
+          y {hidden} más…
+        </Text>
+      )}
+    </Stack>
+  );
+}
+
 const COLUMNS: Column<Entry>[] = [
-  { key: 'at', header: 'Fecha y hora', render: (e) => formatDate(e.at, 'dateTime') },
-  { key: 'user_name', header: 'Usuario', render: (e) => e.user_name ?? 'Sistema' },
+  {
+    key: 'at',
+    header: 'Fecha y hora',
+    nowrap: true,
+    render: (e) => formatDate(e.at, 'dateTime'),
+  },
+  { key: 'user_name', header: 'Usuario', nowrap: true, render: (e) => e.user_name ?? 'Sistema' },
   { key: 'action', header: 'Acción', render: (e) => actionLabel(e.action) },
   { key: 'table_label', header: 'Entidad' },
   {
     key: 'changes',
-    header: 'Campos',
+    header: 'Cambios',
     hideOnMobile: true,
-    render: (e) => e.changes.map((c) => c.label).join(', '),
+    render: (e) => <ChangesCell entry={e} />,
   },
 ];
 
@@ -78,8 +115,13 @@ const LOGIN_RESULTS = [
 ];
 
 const LOGIN_COLUMNS: Column<LoginEvent>[] = [
-  { key: 'created_at', header: 'Fecha', render: (e) => formatDate(e.created_at, 'dateTime') },
-  { key: 'username', header: 'Usuario' },
+  {
+    key: 'created_at',
+    header: 'Fecha',
+    nowrap: true,
+    render: (e) => formatDate(e.created_at, 'dateTime'),
+  },
+  { key: 'username', header: 'Usuario', nowrap: true },
   {
     key: 'result',
     header: 'Resultado',
@@ -244,7 +286,7 @@ function ChangesTab() {
             </Text>
             {selected.changes.map((c) => (
               <Text size="sm" key={c.field}>
-                <b>{c.label}:</b> {formatAuditValue(c.before)} → {formatAuditValue(c.after)}
+                {formatChange(c, selected.action)}
               </Text>
             ))}
           </Stack>

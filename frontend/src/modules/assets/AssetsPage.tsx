@@ -1,4 +1,4 @@
-import { Badge, Select, SimpleGrid, Textarea, TextInput } from '@mantine/core';
+import { Badge, Select, SimpleGrid, Text, Textarea, TextInput, Tooltip } from '@mantine/core';
 import { useState } from 'react';
 
 import { useCan } from '@/app/auth/session';
@@ -16,10 +16,12 @@ import { PageHeader } from '@/shared/ui/PageHeader';
 import {
   type Asset,
   assetsResource,
+  hasNoRate,
   meterRate,
   PLAN_STATE,
   useAssetOptions,
-  useMaintenanceAlerts,
+  usePlanStatuses,
+  worstPlanState,
 } from './api';
 import { AssetSheet } from './AssetSheet';
 
@@ -168,11 +170,7 @@ function AssetView({ record, opened, onClose }: DrawerProps<Asset>) {
 export function AssetsPage() {
   const can = useCan();
   const { data: options } = useAssetOptions();
-  const { data: alerts = [] } = useMaintenanceAlerts();
-  const worst = (assetId: string) => {
-    const states = alerts.filter((a) => a.asset.id === assetId).map((a) => a.state);
-    return states.includes('overdue') ? 'overdue' : states.includes('upcoming') ? 'upcoming' : null;
-  };
+  const { data: plans = [] } = usePlanStatuses();
   const columns: Column<Asset>[] = [
     { key: 'name', header: 'Nombre', sortable: true },
     { key: 'kind', header: 'Tipo', render: (a) => labelOf(options?.kinds, a.kind) },
@@ -186,15 +184,27 @@ export function AssetsPage() {
       key: 'rate',
       header: 'Tarifa',
       align: 'right',
-      render: (a) => `${formatMoney(a.rate)} ${meterRate(a.meter)}`,
+      render: (a) =>
+        hasNoRate(a) ? (
+          <Tooltip label="Sin tarifa, su uso en las labores no suma costo a los ciclos">
+            <Badge color="yellow" variant="light">
+              Sin tarifa
+            </Badge>
+          </Tooltip>
+        ) : (
+          `${formatMoney(a.rate)} ${meterRate(a.meter)}`
+        ),
     },
     {
       key: 'status',
       header: 'Estado',
+      // Color solo si no está operativo
       render: (a) =>
-        a.status === 'in_repair' && (
-          <Badge color="orange" variant="light">
-            En reparación
+        a.status === 'operational' ? (
+          labelOf(options?.statuses, a.status)
+        ) : (
+          <Badge color="yellow" variant="light">
+            {labelOf(options?.statuses, a.status)}
           </Badge>
         ),
     },
@@ -202,28 +212,25 @@ export function AssetsPage() {
       key: 'maintenance',
       header: 'Mantenimiento',
       render: (a) => {
-        const state = worst(a.id);
+        const state = worstPlanState(plans, a.id);
+        if (!state) return <Text c="dimmed">Sin plan</Text>;
         return (
-          state && (
-            <Badge color={PLAN_STATE[state].color} variant="light">
-              {PLAN_STATE[state].label}
-            </Badge>
-          )
+          <Badge color={PLAN_STATE[state].color} variant="light">
+            {PLAN_STATE[state].label}
+          </Badge>
         );
       },
     },
   ];
   return (
-    <>
-      <PageHeader title="Activos" />
-      <CrudTab
-        resource={assetsResource}
-        columns={columns}
-        newLabel="Nuevo activo"
-        canCreate={can('assets:write')}
-        defaultSort="name"
-        renderDrawer={(props) => <AssetView {...props} />}
-      />
-    </>
+    <CrudTab
+      resource={assetsResource}
+      columns={columns}
+      newLabel="Nuevo activo"
+      canCreate={can('assets:write')}
+      defaultSort="name"
+      renderDrawer={(props) => <AssetView {...props} />}
+      header={(newButton) => <PageHeader title="Activos" actions={newButton} />}
+    />
   );
 }

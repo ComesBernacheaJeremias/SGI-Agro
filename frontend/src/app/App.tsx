@@ -9,7 +9,7 @@ import { RouterProvider } from 'react-router-dom';
 
 import { restoreSession } from '@/app/auth/auth';
 import { router } from '@/app/router';
-import { theme } from '@/app/theme';
+import { cssVariables, theme } from '@/app/theme/theme';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,7 +23,7 @@ export function App() {
   }, []);
 
   return (
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={theme} cssVariablesResolver={cssVariables}>
       <DatesProvider settings={{ locale: 'es', firstDayOfWeek: 1 }}>
         <Notifications position="top-right" />
         <ModalsProvider>

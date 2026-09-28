@@ -11,7 +11,6 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useQuery } from '@tanstack/react-query';
-import { IconBan } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useEffect } from 'react';
 
@@ -182,12 +181,7 @@ export function OrderDrawer({ order, opened, onClose }: Props) {
           <>
             <HistoryButton table="production_orders" recordId={order.id} />
             {order.status === 'active' && can('manufacturing:write') && (
-              <Button
-                variant="subtle"
-                color="red"
-                leftSection={<IconBan size={16} />}
-                onClick={cancelOrder}
-              >
+              <Button variant="subtle" color="red" onClick={cancelOrder}>
                 Anular
               </Button>
             )}

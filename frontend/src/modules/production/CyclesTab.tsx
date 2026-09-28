@@ -1,21 +1,26 @@
-import {
-  Badge,
-  Group,
-  Paper,
-  SegmentedControl,
-  Select,
-  SimpleGrid,
-  Stack,
-  Text,
-} from '@mantine/core';
+import { Badge, Group, SegmentedControl, Select, SimpleGrid, Stack, Text } from '@mantine/core';
 import { useState } from 'react';
 
 import { formatDate } from '@/shared/format/date';
 import { formatMoney, formatNumber } from '@/shared/format/number';
+import { InfoCard } from '@/shared/ui/InfoCard';
 
 import { type Cycle, useCycles, useSeasons } from './api';
 
 type Props = { onOpen: (cycle: Cycle) => void };
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <Stack gap={0}>
+      <Text size="xs" c="dimmed">
+        {label}
+      </Text>
+      <Text size="sm" fw={600}>
+        {value}
+      </Text>
+    </Stack>
+  );
+}
 
 /** Tablero de ciclos: una tarjeta por ciclo con costo, cosecha y rinde. */
 export function CyclesTab({ onOpen }: Props) {
@@ -53,15 +58,9 @@ export function CyclesTab({ onOpen }: Props) {
       {data?.items.length === 0 && <Text c="dimmed">No hay ciclos para mostrar.</Text>}
       <SimpleGrid cols={{ base: 1, md: 2, lg: 3 }}>
         {data?.items.map((c) => (
-          <Paper
-            key={c.id}
-            withBorder
-            p="md"
-            style={{ cursor: 'pointer' }}
-            onClick={() => onOpen(c)}
-          >
+          <InfoCard key={c.id} onClick={() => onOpen(c)}>
             <Group justify="space-between" mb={4} wrap="nowrap">
-              <Text fw={600} lineClamp={1}>
+              <Text fw={700} lineClamp={1}>
                 {c.crop.name}
               </Text>
               <Badge color={c.status === 'finished' ? 'gray' : 'green'} variant="light">
@@ -75,34 +74,21 @@ export function CyclesTab({ onOpen }: Props) {
               Desde {formatDate(c.start_date)} · Temporada {c.season.name}
             </Text>
             <SimpleGrid cols={3} spacing="xs">
-              <Stack gap={0}>
-                <Text size="xs" c="dimmed">
-                  Costo
-                </Text>
-                <Text size="sm" fw={600}>
-                  {formatMoney(c.total_cost)}
-                </Text>
-              </Stack>
-              <Stack gap={0}>
-                <Text size="xs" c="dimmed">
-                  Cosechado
-                </Text>
-                <Text size="sm" fw={600}>
-                  {formatNumber(c.harvested_quantity, 'quantity')} {c.harvest_unit}
-                </Text>
-              </Stack>
-              <Stack gap={0}>
-                <Text size="xs" c="dimmed">
-                  Rinde
-                </Text>
-                <Text size="sm" fw={600}>
-                  {c.yield_per_ha
+              <Stat label="Costo" value={formatMoney(c.total_cost)} />
+              <Stat
+                label="Cosechado"
+                value={`${formatNumber(c.harvested_quantity, 'quantity')} ${c.harvest_unit}`}
+              />
+              <Stat
+                label="Rinde"
+                value={
+                  c.yield_per_ha
                     ? `${formatNumber(c.yield_per_ha, 'quantity')} ${c.harvest_unit}/ha`
-                    : '—'}
-                </Text>
-              </Stack>
+                    : '—'
+                }
+              />
             </SimpleGrid>
-          </Paper>
+          </InfoCard>
         ))}
       </SimpleGrid>
     </>

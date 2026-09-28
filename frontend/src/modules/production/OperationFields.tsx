@@ -8,10 +8,10 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconTrash } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { type Asset, meterRate, meterUnit } from '@/modules/assets/api';
+import { type Asset, hasNoRate, meterRate, meterUnit } from '@/modules/assets/api';
 import { suggestWarehouse, useProductStock } from '@/modules/inventory/api';
 import type { Product, Unit, Warehouse } from '@/modules/masterdata/api';
 import { ProductSelect } from '@/modules/masterdata/ProductSelect';
@@ -173,7 +173,6 @@ export function InputsField({
           variant="light"
           size="xs"
           w="fit-content"
-          leftSection={<IconPlus size={14} />}
           onClick={() => onChange([...value, emptyInput(lastWarehouse)])}
         >
           Agregar insumo
@@ -224,7 +223,12 @@ export function AssetsField({ value, onChange, assets, readOnly }: AssetsProps) 
               disabled={readOnly}
               w={110}
             />
-            {asset && row.usage && (
+            {asset && hasNoRate(asset) && (
+              <Text size="xs" c="yellow.8" mb={8}>
+                Sin tarifa: no suma costo al ciclo (cargala en Activos)
+              </Text>
+            )}
+            {asset && !hasNoRate(asset) && row.usage && (
               <Text size="xs" c="dimmed" mb={8}>
                 {formatMoney(Number(row.usage) * Number(asset.rate))} ({formatMoney(asset.rate)}{' '}
                 {meterRate(asset.meter)})
@@ -249,7 +253,6 @@ export function AssetsField({ value, onChange, assets, readOnly }: AssetsProps) 
           variant="light"
           size="xs"
           w="fit-content"
-          leftSection={<IconPlus size={14} />}
           onClick={() => onChange([...value, emptyAsset()])}
         >
           Agregar máquina

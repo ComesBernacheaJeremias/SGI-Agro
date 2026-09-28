@@ -140,6 +140,27 @@ class StockQueries:
         return select(sub.c.product_id, sub.c.avg_cost_after).where(sub.c.rn == 1).subquery()
 
     def stock(self, f: StockFilters, page: PageParams) -> tuple[list[StockRowOut], int]:
+        query, by_warehouse = self._stock_query(f)
+        total = self.session.scalar(select(func.count()).select_from(query.subquery())) or 0
+        order = [Product.name, *([Warehouse.name] if by_warehouse else [])]
+        rows = self.session.execute(
+            query.order_by(*order).offset(page.offset).limit(page.page_size)
+        ).all()
+        return [self._stock_row(row, by_warehouse) for row in rows], total
+
+    def total_value(self, f: StockFilters) -> Decimal:
+        """Valor del stock con los filtros, de todas las páginas (misma cuenta que cada fila)."""
+        sub = self._stock_query(f)[0].subquery()
+        row_value = func.round(sub.c.quantity * sub.c.avg_cost, 2)
+        return Decimal(self.session.scalar(select(func.coalesce(func.sum(row_value), 0))) or 0)
+
+    def product_ids(self, f: StockFilters) -> set[UUID]:
+        """Productos que aparecen en el listado con esos filtros (todas las páginas)."""
+        query = self._stock_query(f)[0].with_only_columns(Product.id).distinct()
+        return set(self.session.scalars(query))
+
+    def _stock_query(self, f: StockFilters) -> tuple[Select[Any], bool]:
+        """Consulta de saldos con los filtros aplicados (sin orden ni paginado)."""
         by_warehouse = f.by_warehouse or f.warehouse_id is not None
         totals = self._totals(f, by_warehouse)
         product_totals = self._totals(StockFilters(at=f.at), by_warehouse=False)
@@ -147,7 +168,7 @@ class StockQueries:
 
         quantity = func.coalesce(totals.c.quantity, 0)
         total_quantity = func.coalesce(product_totals.c.quantity, 0)
-        below_min = and_(Product.min_stock > 0, total_quantity <= Product.min_stock)
+        below_min = and_(Product.min_stock > 0, total_quantity < Product.min_stock)
 
         query: Select[Any] = (
             select(
@@ -183,13 +204,7 @@ class StockQueries:
             query = query.where(quantity != 0)
         if not f.include_zero and not f.below_min:
             query = query.where(or_(Product.is_active.is_(True), quantity != 0))
-
-        total = self.session.scalar(select(func.count()).select_from(query.subquery())) or 0
-        order = [Product.name, *([Warehouse.name] if by_warehouse else [])]
-        rows = self.session.execute(
-            query.order_by(*order).offset(page.offset).limit(page.page_size)
-        ).all()
-        return [self._stock_row(row, by_warehouse) for row in rows], total
+        return query, by_warehouse
 
     @staticmethod
     def _stock_row(row: Any, by_warehouse: bool) -> StockRowOut:
@@ -207,7 +222,7 @@ class StockQueries:
             below_min=bool(row.below_min),
         )
 
-    # --- Alertas de mínimo ("Necesitás comprar") ---
+    # --- Alertas de mínimo ("Necesitás comprar"): solo por debajo del mínimo, no igual ---
 
     def alerts(self, product_ids: set[UUID] | None = None) -> list[StockAlertOut]:
         totals = self._totals(StockFilters(), by_warehouse=False)
@@ -216,9 +231,7 @@ class StockQueries:
             select(Product, Unit.code, quantity.label("quantity"))
             .join(Unit, Unit.id == Product.unit_id)
             .outerjoin(totals, totals.c.product_id == Product.id)
-            .where(
-                Product.is_active.is_(True), Product.min_stock > 0, quantity <= Product.min_stock
-            )
+            .where(Product.is_active.is_(True), Product.min_stock > 0, quantity < Product.min_stock)
             .order_by(Product.name)
         )
         if product_ids is not None:

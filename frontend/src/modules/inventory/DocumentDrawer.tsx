@@ -10,7 +10,6 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useQuery } from '@tanstack/react-query';
-import { IconBan } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useEffect } from 'react';
 
@@ -235,12 +234,7 @@ export function DocumentDrawer({ documentId, type, opened, onClose }: Props) {
           <>
             <HistoryButton table="stock_documents" recordId={document.id} />
             {canCancel && (
-              <Button
-                variant="subtle"
-                color="red"
-                leftSection={<IconBan size={16} />}
-                onClick={cancelDocument}
-              >
+              <Button variant="subtle" color="red" onClick={cancelDocument}>
                 Anular
               </Button>
             )}

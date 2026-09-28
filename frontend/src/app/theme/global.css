@@ -1,0 +1,6 @@
+/* Estilos globales mínimos (el resto va en el tema de Mantine). */
+
+/* Números de ancho fijo: los importes quedan alineados en tablas y tarjetas */
+body {
+  font-variant-numeric: tabular-nums;
+}

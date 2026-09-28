@@ -1,6 +1,11 @@
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
+// Fuente instalada en el proyecto (la CSP no permite fuentes de otros sitios)
+import '@fontsource/ibm-plex-sans/400.css';
+import '@fontsource/ibm-plex-sans/600.css';
+import '@fontsource/ibm-plex-sans/700.css';
+import '@/app/theme/global.css';
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';

@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 
 import { useCan } from '@/app/auth/session';
 
-import { alertText, useStockAlerts } from './api';
+import { alertText, STOCK_ALERT_COLOR, useStockAlerts } from './api';
 
-/** Campana de la barra superior: productos en su stock mínimo ("Necesitás comprar"). */
+/** Campana de la barra superior: productos por debajo de su stock mínimo ("Necesitás comprar"). */
 export function StockAlertsBell() {
   const canRead = useCan()('inventory:read');
   const navigate = useNavigate();
@@ -16,7 +16,12 @@ export function StockAlertsBell() {
   return (
     <Popover position="bottom-end" width={340} shadow="md">
       <Popover.Target>
-        <Indicator label={alerts.length} size={16} color="orange" disabled={alerts.length === 0}>
+        <Indicator
+          label={alerts.length}
+          size={16}
+          color={STOCK_ALERT_COLOR}
+          disabled={alerts.length === 0}
+        >
           <ActionIcon variant="subtle" color="gray" aria-label="Necesitás comprar">
             <IconBell size={20} />
           </ActionIcon>
@@ -28,7 +33,7 @@ export function StockAlertsBell() {
         </Text>
         {alerts.length === 0 ? (
           <Text size="sm" c="dimmed">
-            Ningún producto está en su stock mínimo.
+            Ningún producto por debajo del mínimo.
           </Text>
         ) : (
           <Stack gap={6}>
@@ -38,7 +43,7 @@ export function StockAlertsBell() {
               </Text>
             ))}
             <UnstyledButton onClick={() => navigate('/inventario')}>
-              <Text size="sm" c="green.8" fw={500}>
+              <Text size="sm" c="brand.6" fw={500}>
                 Ver stock →
               </Text>
             </UnstyledButton>

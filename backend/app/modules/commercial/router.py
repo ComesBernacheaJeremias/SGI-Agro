@@ -294,8 +294,11 @@ def list_documents(
     date_to: date | None = None,
     q: str | None = None,
     only_pending: bool = False,
+    only_overdue: bool = False,
 ) -> Page[CommercialDocumentSummaryOut]:
-    filters = DocumentFilters(direction, party_id, status_, date_from, date_to, q, only_pending)
+    filters = DocumentFilters(
+        direction, party_id, status_, date_from, date_to, q, only_pending, only_overdue
+    )
     items, total = CommercialDocumentService(db).search(filters, page)
     return _page(document_summaries(db, items), total, page)
 

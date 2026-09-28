@@ -1,5 +1,4 @@
 import { Alert, Button, Group, LoadingOverlay, Stack, Table, Text, Title } from '@mantine/core';
-import { IconFileSpreadsheet, IconFileTypePdf } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 
@@ -19,6 +18,10 @@ import { FILTER_RESOURCES } from './filters';
 import { ReportFilters } from './ReportFilters';
 
 const NUMERIC = new Set(['money', 'quantity', 'percent']);
+const EXPORTS = [
+  { format: 'xlsx', label: 'Excel' },
+  { format: 'pdf', label: 'PDF' },
+] as const;
 const ROW_BG = {
   normal: undefined,
   subtotal: 'var(--mantine-color-default-hover)',
@@ -62,7 +65,10 @@ export function ReportTable({
                     key={c.key}
                     ta={align(c.kind)}
                     pl={j === 0 && row.indent ? `calc(${row.indent} * 1.5rem)` : undefined}
-                    c={NUMERIC.has(c.kind) && Number(row.cells[c.key]) < 0 ? 'red' : undefined}
+                    // Solo la primera columna (nombres) puede ocupar dos líneas; montos,
+                    // cantidades con unidad y fechas no se cortan (la tabla hace scroll)
+                    style={j > 0 ? { whiteSpace: 'nowrap' } : undefined}
+                    c={NUMERIC.has(c.kind) && Number(row.cells[c.key]) < 0 ? 'red.7' : undefined}
                   >
                     {formatCell(row.cells[c.key], c.kind)}
                   </Table.Td>
@@ -75,7 +81,7 @@ export function ReportTable({
           <Table.Tfoot>
             <Table.Tr bg={ROW_BG.total}>
               {report.columns.map((c, j) => (
-                <Table.Th key={c.key} ta={align(c.kind)}>
+                <Table.Th key={c.key} ta={align(c.kind)} style={{ whiteSpace: 'nowrap' }}>
                   {j === 0 ? 'Total' : formatCell(report.totals?.[c.key], c.kind)}
                 </Table.Th>
               ))}
@@ -153,32 +159,22 @@ export function ReportView({ info, onOpenLink, withTitle = false }: Props) {
       {data && missing.length === 0 && (
         <>
           <Group justify="space-between" wrap="wrap">
-            <div>
-              <Text fw={600}>{data.title}</Text>
-              <Text size="sm" c="dimmed">
-                {data.subtitle}
-              </Text>
-            </div>
+            {/* El nombre del reporte ya está en la pestaña o el título: acá solo el período */}
+            <Text size="sm" c="dimmed">
+              {data.subtitle}
+            </Text>
             <Group gap="xs">
-              <Button
-                variant="light"
-                size="xs"
-                leftSection={<IconFileSpreadsheet size={16} />}
-                loading={exporting === 'xlsx'}
-                onClick={() => exportAs('xlsx')}
-              >
-                Excel
-              </Button>
-              <Button
-                variant="light"
-                size="xs"
-                color="red"
-                leftSection={<IconFileTypePdf size={16} />}
-                loading={exporting === 'pdf'}
-                onClick={() => exportAs('pdf')}
-              >
-                PDF
-              </Button>
+              {EXPORTS.map(({ format, label }) => (
+                <Button
+                  key={format}
+                  variant="default"
+                  size="xs"
+                  loading={exporting === format}
+                  onClick={() => exportAs(format)}
+                >
+                  {label}
+                </Button>
+              ))}
             </Group>
           </Group>
           <div style={{ position: 'relative' }}>

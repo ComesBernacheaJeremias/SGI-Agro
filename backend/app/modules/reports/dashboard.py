@@ -8,7 +8,6 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.db import DbSession
-from app.core.pagination import PageParams
 from app.core.schemas import Schema
 from app.modules.assets.maintenance import PlanQueries
 from app.modules.assets.permissions import ASSETS_READ
@@ -30,6 +29,7 @@ from app.modules.production.models import CropCycle, CycleStatus
 from app.modules.production.permissions import PRODUCTION_READ
 from app.modules.production.queries import ProductionQueries
 from app.modules.production.schemas import CycleOut
+from app.modules.production.valuation import own_produce_total
 
 router = APIRouter(prefix="/api/v1/dashboard", tags=["dashboard"])
 ZERO = Decimal(0)
@@ -48,7 +48,11 @@ class CyclesSummary(Schema):
 
 
 class StockSummary(Schema):
+    #: A costo contable (la producción propia cuenta cero)
     value: Decimal
+    #: Producción propia valorizada por costo del ciclo: solo informativo (ADR-012)
+    own_produce_value: Decimal
+    own_produce_provisional: bool
     alerts: list[StockAlertOut]
 
 
@@ -108,8 +112,13 @@ def _cycles(db: Session) -> CyclesSummary:
 
 def _stock(db: Session) -> StockSummary:
     queries = StockQueries(db)
-    items, _ = queries.stock(StockFilters(), PageParams(page=1, page_size=100_000))
-    return StockSummary(value=sum((i.value for i in items), ZERO), alerts=queries.alerts())
+    own = own_produce_total(db)
+    return StockSummary(
+        value=queries.total_value(StockFilters()),
+        own_produce_value=own.value,
+        own_produce_provisional=own.provisional,
+        alerts=queries.alerts(),
+    )
 
 
 def _accounts(db: Session) -> AccountsSummary:

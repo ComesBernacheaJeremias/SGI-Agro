@@ -1,5 +1,4 @@
 import { Badge, Button, Group, LoadingOverlay, Table } from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { useCan } from '@/app/auth/session';
@@ -22,9 +21,7 @@ export function RolesTab() {
     <>
       {canManage && (
         <Group justify="flex-end" mb="sm">
-          <Button leftSection={<IconPlus size={16} />} onClick={() => open(null)}>
-            Nuevo rol
-          </Button>
+          <Button onClick={() => open(null)}>Nuevo rol</Button>
         </Group>
       )}
       <Table striped highlightOnHover pos="relative">

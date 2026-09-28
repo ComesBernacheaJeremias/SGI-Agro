@@ -13,7 +13,6 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconBan, IconPlus } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { Fragment, useEffect, useState } from 'react';
 
@@ -175,12 +174,7 @@ export function MovementDrawer({ movement, opened, onClose }: DrawerProps) {
           <>
             <HistoryButton table="cash_movements" recordId={movement.id} />
             {movement.status === 'active' && can('cash:write') && (
-              <Button
-                variant="subtle"
-                color="red"
-                leftSection={<IconBan size={16} />}
-                onClick={cancelMovement}
-              >
+              <Button variant="subtle" color="red" onClick={cancelMovement}>
                 Anular
               </Button>
             )}
@@ -323,7 +317,7 @@ export function CashTab() {
   const [account, setAccount] = useState<{ id: string; name: string } | null>(null);
 
   const columns: Column<CashMovement>[] = [
-    { key: 'date', header: 'Fecha', render: (m) => formatDate(m.date) },
+    { key: 'date', header: 'Fecha', nowrap: true, render: (m) => formatDate(m.date) },
     { key: 'kind', header: 'Tipo', render: (m) => labelOf(options?.movement_kinds, m.kind) },
     {
       key: 'account',
@@ -397,9 +391,7 @@ export function CashTab() {
       <Group justify="space-between">
         <Text fw={600}>Movimientos sin tercero</Text>
         {can('cash:write') && (
-          <Button leftSection={<IconPlus size={16} />} onClick={() => setDrawer({ record: null })}>
-            Nuevo movimiento
-          </Button>
+          <Button onClick={() => setDrawer({ record: null })}>Nuevo movimiento</Button>
         )}
       </Group>
       <DataTable

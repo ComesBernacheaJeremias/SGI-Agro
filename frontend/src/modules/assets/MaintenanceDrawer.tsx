@@ -12,7 +12,7 @@ import {
   Textarea,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconBan, IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconTrash } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useEffect } from 'react';
 
@@ -236,12 +236,7 @@ export function MaintenanceDrawer({
           <>
             <HistoryButton table="maintenances" recordId={maintenance.id} />
             {maintenance.status === 'active' && can('assets:write') && (
-              <Button
-                variant="subtle"
-                color="red"
-                leftSection={<IconBan size={16} />}
-                onClick={cancel}
-              >
+              <Button variant="subtle" color="red" onClick={cancel}>
                 Anular
               </Button>
             )}
@@ -374,7 +369,6 @@ export function MaintenanceDrawer({
             <Button
               variant="light"
               size="xs"
-              leftSection={<IconPlus size={14} />}
               onClick={() => setParts([...values.parts, emptyPart()])}
             >
               Agregar repuesto

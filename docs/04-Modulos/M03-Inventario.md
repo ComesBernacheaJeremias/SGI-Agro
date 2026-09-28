@@ -92,3 +92,5 @@ Decisión de diseño: [[ADR-016-Motor-de-stock]].
 **Pendiente**: congelar movimientos de ciclos finalizados (F3); FK de dimensiones cuando existan establecimientos/lotes/ciclos (F3); impedir cambiar la unidad base de un producto con movimientos (`TODO(F2)` en maestros → hacer junto con F3).
 
 **Ajuste 27/09:** `GET /api/v1/stock` acepta `product_id` (stock de un producto, por almacén con `by_warehouse=true`), usado para proponer el almacén de los insumos de una labor. El listado de productos acepta varios tipos (`type=input&type=finished`).
+
+**Ajuste 28/09 (pedido del usuario):** "Necesitás comprar" / "Bajo mínimo" solo cuando el stock total es **menor** que el mínimo (si es igual, no avisa). Color de faltantes: ámbar (`STOCK_ALERT_COLOR` en `inventory/api.ts`), ver [[ADR-025-Diseno-visual]].

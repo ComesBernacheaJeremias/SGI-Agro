@@ -1,6 +1,5 @@
-import { Badge } from '@mantine/core';
-
 import { useCan } from '@/app/auth/session';
+import { activeColumn } from '@/shared/crud/columns';
 import { CrudTab } from '@/shared/crud/CrudTab';
 import type { Column } from '@/shared/crud/DataTable';
 import { formatDate } from '@/shared/format/date';
@@ -15,19 +14,12 @@ const COLUMNS: Column<User>[] = [
   {
     key: 'last_login_at',
     header: 'Último ingreso',
+    nowrap: true,
     sortable: true,
     hideOnMobile: true,
     render: (u) => formatDate(u.last_login_at, 'dateTime') || '—',
   },
-  {
-    key: 'is_active',
-    header: 'Estado',
-    render: (u) => (
-      <Badge color={u.is_active ? 'green' : 'gray'} variant="light">
-        {u.is_active ? 'Activo' : 'Inactivo'}
-      </Badge>
-    ),
-  },
+  activeColumn<User>(),
 ];
 
 export function UsersTab() {

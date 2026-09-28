@@ -41,8 +41,8 @@ export function OperationsTab({ onOpen }: Props) {
     };
 
   const columns: Column<OperationSummary>[] = [
-    { key: 'date', header: 'Fecha', render: (o) => formatDate(o.date) },
-    { key: 'number', header: 'Número', hideOnMobile: true },
+    { key: 'date', header: 'Fecha', nowrap: true, render: (o) => formatDate(o.date) },
+    { key: 'number', header: 'Número', nowrap: true, hideOnMobile: true },
     { key: 'operation_type', header: 'Labor', render: (o) => o.operation_type.name },
     { key: 'cycles', header: 'Ciclos', render: (o) => o.cycles.join(' / ') },
     {

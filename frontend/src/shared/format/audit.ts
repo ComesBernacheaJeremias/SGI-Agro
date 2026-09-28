@@ -13,3 +13,13 @@ export function formatAuditValue(value: unknown): string {
   if (typeof value === 'string' && ISO_DATETIME.test(value)) return formatDate(value, 'dateTime');
   return String(value);
 }
+
+type Change = { label: string; before?: unknown; after?: unknown };
+
+/** "Precio: 100 → 120" (en un alta, solo el valor nuevo). */
+export function formatChange(change: Change, action: string): string {
+  const after = formatAuditValue(change.after);
+  return action === 'create'
+    ? `${change.label}: ${after}`
+    : `${change.label}: ${formatAuditValue(change.before)} → ${after}`;
+}

@@ -1,4 +1,4 @@
-import { Group, SegmentedControl, Select, Stack, Text } from '@mantine/core';
+import { Group, Input, SegmentedControl, Select } from '@mantine/core';
 import { useState } from 'react';
 
 import { type Product, useActiveList, useMasterdataOptions } from '@/modules/masterdata/api';
@@ -154,17 +154,16 @@ export function ReportFilters({ filters, values, onChange }: Props) {
             const name = f.name as string;
             const value = values[name] ?? f.default ?? null;
             return (f.options ?? []).length <= 4 ? (
-              <Stack key={key} gap={4}>
-                <Text size="sm" fw={500}>
-                  {f.label}
-                </Text>
+              // Misma etiqueta y altura que los otros filtros, para que queden alineados
+              <Input.Wrapper key={key} label={f.label}>
                 <SegmentedControl
-                  size="xs"
+                  display="flex"
+                  size="sm"
                   data={f.options ?? []}
                   value={value ?? undefined}
                   onChange={(v) => onChange({ [name]: v })}
                 />
-              </Stack>
+              </Input.Wrapper>
             ) : (
               <Select
                 key={key}

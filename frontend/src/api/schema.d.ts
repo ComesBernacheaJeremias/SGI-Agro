@@ -809,7 +809,7 @@ export interface paths {
         };
         /**
          * Stock Alerts
-         * @description Productos en su stock mínimo o por debajo ("Necesitás comprar").
+         * @description Productos por debajo de su stock mínimo ("Necesitás comprar").
          */
         get: operations["stock_alerts_api_v1_stock_alerts_get"];
         put?: never;
@@ -4618,17 +4618,6 @@ export interface components {
             /** Page Size */
             page_size: number;
         };
-        /** Page[StockRowOut] */
-        Page_StockRowOut_: {
-            /** Items */
-            items: components["schemas"]["StockRowOut"][];
-            /** Total */
-            total: number;
-            /** Page */
-            page: number;
-            /** Page Size */
-            page_size: number;
-        };
         /** Page[UnitOut] */
         Page_UnitOut_: {
             /** Items */
@@ -5495,7 +5484,7 @@ export interface components {
         Status: "active" | "cancelled";
         /**
          * StockAlertOut
-         * @description Producto en su stock mínimo o por debajo: "Necesitás comprar".
+         * @description Producto por debajo de su stock mínimo: "Necesitás comprar".
          */
         StockAlertOut: {
             product: components["schemas"]["ProductRef"];
@@ -5507,6 +5496,23 @@ export interface components {
             min_stock: string;
             /** Missing */
             missing: string;
+        };
+        /** StockPage */
+        StockPage: {
+            /** Items */
+            items: components["schemas"]["StockRowOut"][];
+            /** Total */
+            total: number;
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+            /** Total Value */
+            total_value: string;
+            /** Own Produce Value */
+            own_produce_value: string;
+            /** Own Produce Provisional */
+            own_produce_provisional: boolean;
         };
         /** StockRowOut */
         StockRowOut: {
@@ -5524,11 +5530,22 @@ export interface components {
             min_stock: string | null;
             /** Below Min */
             below_min: boolean;
+            /** Estimated Value */
+            estimated_value?: string | null;
+            /**
+             * Estimated Provisional
+             * @default false
+             */
+            estimated_provisional: boolean;
         };
         /** StockSummary */
         StockSummary: {
             /** Value */
             value: string;
+            /** Own Produce Value */
+            own_produce_value: string;
+            /** Own Produce Provisional */
+            own_produce_provisional: boolean;
             /** Alerts */
             alerts: components["schemas"]["StockAlertOut"][];
         };
@@ -7665,7 +7682,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Page_StockRowOut_"];
+                    "application/json": components["schemas"]["StockPage"];
                 };
             };
             /** @description Validation Error */
@@ -10322,6 +10339,7 @@ export interface operations {
                 date_to?: string | null;
                 q?: string | null;
                 only_pending?: boolean;
+                only_overdue?: boolean;
                 page?: number;
                 page_size?: number;
             };

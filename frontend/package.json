@@ -16,6 +16,7 @@
     "gen:api": "openapi-typescript http://localhost:8000/api/openapi.json -o src/api/schema.d.ts"
   },
   "dependencies": {
+    "@fontsource/ibm-plex-sans": "^5.3.0",
     "@mantine/core": "^9.6.3",
     "@mantine/dates": "^9.6.3",
     "@mantine/form": "^9.6.3",

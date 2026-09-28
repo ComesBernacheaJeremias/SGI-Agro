@@ -91,6 +91,8 @@ class DocumentFilters:
     date_to: date | None = None
     q: str | None = None
     only_pending: bool = False
+    #: Pendientes con el vencimiento ya pasado
+    only_overdue: bool = False
 
 
 class CommercialDocumentService:
@@ -127,12 +129,14 @@ class CommercialDocumentService:
                     Party.name.ilike(pattern),
                 )
             )
-        if f.only_pending:
+        if f.only_pending or f.only_overdue:
             query = query.where(
                 CommercialDocument.status == Status.ACTIVE,
                 CommercialDocument.kind != DocumentKind.CREDIT_NOTE,
                 CommercialDocument.total > _applied_subquery(),
             )
+        if f.only_overdue:
+            query = query.where(CommercialDocument.due_date < date.today())
         return paginate(self.session, query, page)
 
     # --- Alta / edición / anulación ---

@@ -1,6 +1,5 @@
 import { Alert, Button, Checkbox, Fieldset, Stack, Textarea, TextInput } from '@mantine/core';
 import { useQueryClient } from '@tanstack/react-query';
-import { IconTrash } from '@tabler/icons-react';
 
 import { EntityDrawer } from '@/shared/crud/EntityDrawer';
 import { HistoryButton } from '@/shared/crud/HistoryButton';
@@ -78,12 +77,7 @@ export function RoleDrawer({ role, opened, onClose, canManage }: Props) {
           <>
             <HistoryButton table="roles" recordId={role.id} />
             {canManage && !role.is_system && (
-              <Button
-                variant="subtle"
-                color="red"
-                leftSection={<IconTrash size={16} />}
-                onClick={remove}
-              >
+              <Button variant="subtle" color="red" onClick={remove}>
                 Eliminar
               </Button>
             )}

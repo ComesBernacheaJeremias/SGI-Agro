@@ -11,7 +11,7 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
-import { IconArrowLeft, IconBulb, IconSearch } from '@tabler/icons-react';
+import { IconBulb, IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -38,7 +38,6 @@ export function ManualPage() {
             to={session.status === 'authenticated' ? '/' : '/login'}
             variant="subtle"
             size="xs"
-            leftSection={<IconArrowLeft size={14} />}
           >
             {session.status === 'authenticated' ? 'Volver al sistema' : 'Ir a entrar'}
           </Button>

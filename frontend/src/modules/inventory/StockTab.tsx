@@ -1,4 +1,4 @@
-import { Badge, Group, Select, Switch, Text } from '@mantine/core';
+import { Badge, Group, Select, Stack, Switch, Text } from '@mantine/core';
 
 import { categoriesResource, useActiveList, warehousesResource } from '@/modules/masterdata/api';
 import { DateInput } from '@/shared/components/DateInput';
@@ -7,7 +7,8 @@ import { useListState } from '@/shared/crud/hooks';
 import { formatMoney, formatNumber } from '@/shared/format/number';
 import { useState } from 'react';
 
-import { type StockRow, useStock } from './api';
+import { ownProduceNote, STOCK_ALERT_COLOR, type StockRow, useStock } from './api';
+import { EstimatedValue } from './EstimatedValue';
 
 type Row = StockRow & { id: string };
 
@@ -46,7 +47,13 @@ export function StockTab({ onOpenKardex }: Props) {
     };
 
   const columns: Column<Row>[] = [
-    { key: 'code', header: 'Código', render: (r) => r.product.code, hideOnMobile: true },
+    {
+      key: 'code',
+      header: 'Código',
+      nowrap: true,
+      render: (r) => r.product.code,
+      hideOnMobile: true,
+    },
     {
       key: 'product',
       header: 'Producto',
@@ -54,7 +61,7 @@ export function StockTab({ onOpenKardex }: Props) {
         <Group gap={6} wrap="nowrap">
           {r.product.name}
           {r.below_min && (
-            <Badge color="orange" size="xs">
+            <Badge color={STOCK_ALERT_COLOR} size="xs">
               Bajo mínimo
             </Badge>
           )}
@@ -75,12 +82,22 @@ export function StockTab({ onOpenKardex }: Props) {
       header: 'Costo prom.',
       align: 'right',
       hideOnMobile: true,
-      render: (r) => formatMoney(r.avg_cost),
+      // Producción propia: no tiene costo promedio (su costo está en el ciclo)
+      render: (r) => (r.estimated_value != null ? '—' : formatMoney(r.avg_cost)),
     },
-    { key: 'value', header: 'Valor', align: 'right', render: (r) => formatMoney(r.value) },
+    {
+      key: 'value',
+      header: 'Valor',
+      align: 'right',
+      render: (r) =>
+        r.estimated_value != null ? (
+          <EstimatedValue value={r.estimated_value} provisional={r.estimated_provisional} />
+        ) : (
+          formatMoney(r.value)
+        ),
+    },
   ];
-
-  const pageValue = (data?.items ?? []).reduce((sum, r) => sum + Number(r.value), 0);
+  const own = data && ownProduceNote(data.own_produce_value, data.own_produce_provisional);
 
   return (
     <>
@@ -119,7 +136,7 @@ export function StockTab({ onOpenKardex }: Props) {
             />
             <Switch
               label="Bajo mínimo"
-              color="orange"
+              color={STOCK_ALERT_COLOR}
               checked={belowMin}
               onChange={(e) => reset(setBelowMin)(e.currentTarget.checked)}
             />
@@ -127,9 +144,17 @@ export function StockTab({ onOpenKardex }: Props) {
         }
       />
       {data && data.items.length > 0 && (
-        <Text size="sm" ta="right" mt={4}>
-          Valor de esta página: <b>{formatMoney(pageValue)}</b>
-        </Text>
+        <Stack gap={0} align="flex-end" mt={4}>
+          <Text size="sm">
+            Valor total:{' '}
+            <b>{formatMoney(Number(data.total_value) + Number(data.own_produce_value))}</b>
+          </Text>
+          {own && (
+            <Text size="xs" c="dimmed">
+              {own}
+            </Text>
+          )}
+        </Stack>
       )}
     </>
   );

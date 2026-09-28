@@ -86,6 +86,8 @@ PLANIFICADO ──► EN CURSO ──► FINALIZADO
 ## Valuación de la cosecha
 El producto cosechado ingresa al stock con **costo cero**: su costo real está en el ciclo, y la rentabilidad se calcula por ciclo (ingresos de sus partidas − costos del ciclo). Evita recalcular stock cada vez que cambia un costo del ciclo. Ver [[M08-Costos-y-Rentabilidad]].
 
+**Valor informativo (28/09):** Inventario y el tablero muestran la producción propia valorizada con el costo por unidad de su ciclo (`production/valuation.py`), "provisorio" si el ciclo sigue en curso. Solo para mostrar: no entra en costo de lo vendido, kardex ni resultado. Detalle y por qué: [[ADR-012-Rentabilidad-por-partida]].
+
 ## Datos
 `farms`, `plots`, `crops`, `seasons`, `operation_types`, `crop_cycles`, `field_operations`, `field_operation_inputs`, `field_operation_assets`, `batches`.
 

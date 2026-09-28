@@ -1,11 +1,10 @@
 import { Button, Drawer, Loader, Stack, Text, Timeline } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconHistory } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 
 import { api } from '@/api/client';
 import { unwrap } from '@/api/errors';
-import { formatAuditValue } from '@/shared/format/audit';
+import { formatChange } from '@/shared/format/audit';
 import { formatDate } from '@/shared/format/date';
 
 const ACTION_LABELS: Record<string, string> = {
@@ -36,7 +35,7 @@ export function HistoryButton({ table, recordId }: Props) {
 
   return (
     <>
-      <Button variant="subtle" leftSection={<IconHistory size={16} />} onClick={open}>
+      <Button variant="subtle" onClick={open}>
         Historial
       </Button>
       <Drawer opened={opened} onClose={close} title="Historial de cambios" position="right">
@@ -56,10 +55,7 @@ export function HistoryButton({ table, recordId }: Props) {
               <Stack gap={2} mt={4}>
                 {entry.changes.map((change) => (
                   <Text size="sm" key={change.field}>
-                    <b>{change.label}:</b>{' '}
-                    {entry.action === 'create'
-                      ? formatAuditValue(change.after)
-                      : `${formatAuditValue(change.before)} → ${formatAuditValue(change.after)}`}
+                    {formatChange(change, entry.action)}
                   </Text>
                 ))}
               </Stack>

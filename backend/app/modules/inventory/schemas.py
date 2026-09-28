@@ -5,6 +5,7 @@ from uuid import UUID
 
 from pydantic import Field, StringConstraints
 
+from app.core.pagination import Page
 from app.core.schemas import Schema
 from app.modules.inventory.models import DocumentStatus, DocumentType
 from app.modules.masterdata.schemas import Option
@@ -90,7 +91,7 @@ class DocumentOut(DocumentSummaryOut):
 
 
 class StockAlertOut(Schema):
-    """Producto en su stock mínimo o por debajo: "Necesitás comprar"."""
+    """Producto por debajo de su stock mínimo: "Necesitás comprar"."""
 
     product: ProductRef
     unit: str
@@ -122,6 +123,19 @@ class StockRowOut(Schema):
     value: Decimal
     min_stock: Decimal | None
     below_min: bool
+    #: Producción propia: valor SOLO INFORMATIVO según el costo de su ciclo (ADR-012);
+    #: `value` sigue en cero. `None` = no es producción propia o no se puede estimar.
+    estimated_value: Decimal | None = None
+    #: El ciclo de origen sigue en curso: el valor estimado puede cambiar
+    estimated_provisional: bool = False
+
+
+class StockPage(Page[StockRowOut]):
+    #: Valor de todo el stock filtrado (no solo de la página), a costo contable
+    total_value: Decimal
+    #: Producción propia valorizada por costo del ciclo (informativo, ADR-012)
+    own_produce_value: Decimal
+    own_produce_provisional: bool
 
 
 class KardexRowOut(Schema):

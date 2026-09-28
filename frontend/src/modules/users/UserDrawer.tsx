@@ -1,6 +1,5 @@
 import { Button, PasswordInput, Select, TextInput } from '@mantine/core';
 import { modals } from '@mantine/modals';
-import { IconKey, IconLogout } from '@tabler/icons-react';
 
 import { useSession } from '@/app/auth/session';
 import type { DrawerProps } from '@/shared/crud/CrudTab';
@@ -105,20 +104,12 @@ export function UserDrawer({
             onClose={onClose}
           >
             {canManage && (
-              <Button
-                variant="subtle"
-                leftSection={<IconKey size={16} />}
-                onClick={openResetPassword}
-              >
+              <Button variant="subtle" onClick={openResetPassword}>
                 Contraseña
               </Button>
             )}
             {canManage && (
-              <Button
-                variant="subtle"
-                leftSection={<IconLogout size={16} />}
-                onClick={() => void closeSessions(record)}
-              >
+              <Button variant="subtle" onClick={() => void closeSessions(record)}>
                 Cerrar sesiones
               </Button>
             )}

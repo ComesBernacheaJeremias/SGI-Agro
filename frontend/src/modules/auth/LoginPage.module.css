@@ -1,0 +1,63 @@
+/* Dos mitades en pantallas grandes; en el celular, franja chica arriba y el formulario. */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+@media (max-width: 62em) {
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+}
+
+/* Panel de marca del login: color de la paleta con surcos diagonales suaves. */
+.panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-xl);
+  padding: var(--mantine-spacing-xl) calc(var(--mantine-spacing-xl) * 1.5);
+  background-color: var(--app-panel);
+  background-image: repeating-linear-gradient(
+    115deg,
+    rgb(255 255 255 / 4%) 0 2px,
+    transparent 2px 26px
+  );
+  color: var(--app-panel-text);
+}
+
+.name {
+  font-size: var(--mantine-font-size-xl);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.claim {
+  max-width: 460px;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.detail {
+  color: color-mix(in srgb, var(--app-panel-text) 75%, transparent);
+}
+
+.form {
+  background: var(--app-bg);
+}
+
+/* En el celular: el panel es una franja arriba, sin la frase grande */
+@media (max-width: 62em) {
+  .panel {
+    padding-block: var(--mantine-spacing-md);
+  }
+
+  .claim,
+  .detail {
+    display: none;
+  }
+}

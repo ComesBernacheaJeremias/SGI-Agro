@@ -1,5 +1,4 @@
 import { Button, Tabs } from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
 import { Fragment, useState } from 'react';
 
 import { useCan } from '@/app/auth/session';
@@ -48,14 +47,7 @@ export function CommercialPage() {
     <>
       <PageHeader
         title="Comercial y caja"
-        actions={
-          action &&
-          canWrite && (
-            <Button leftSection={<IconPlus size={16} />} onClick={openNew}>
-              {action.label}
-            </Button>
-          )
-        }
+        actions={action && canWrite && <Button onClick={openNew}>{action.label}</Button>}
       />
       <Tabs value={tab} onChange={(v) => setTab((v ?? 'sales') as Tab)} keepMounted={false}>
         <Tabs.List mb="md">

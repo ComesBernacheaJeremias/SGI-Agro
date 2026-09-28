@@ -1,5 +1,5 @@
 import { Button, Menu, Tabs } from '@mantine/core';
-import { IconChevronDown, IconPlus } from '@tabler/icons-react';
+import { IconChevronDown } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { useCan } from '@/app/auth/session';
@@ -40,12 +40,7 @@ export function InventoryPage() {
           allowed.length > 0 && (
             <Menu position="bottom-end">
               <Menu.Target>
-                <Button
-                  leftSection={<IconPlus size={16} />}
-                  rightSection={<IconChevronDown size={14} />}
-                >
-                  Nuevo
-                </Button>
+                <Button rightSection={<IconChevronDown size={14} />}>Nuevo</Button>
               </Menu.Target>
               <Menu.Dropdown>
                 {allowed.map((d) => (

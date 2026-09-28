@@ -88,6 +88,23 @@ export function useMaintenanceAlerts(enabled = true) {
   });
 }
 
+/** Estado de todos los planes activos (también los que están al día). */
+export function usePlanStatuses() {
+  return useQuery({
+    queryKey: ['maintenance-alerts', 'plans'],
+    queryFn: async () => unwrap(await api.GET('/api/v1/maintenance-alerts/plans')),
+  });
+}
+
+/** Estado de mantenimiento de un activo: el peor de sus planes (`null` = sin planes). */
+export function worstPlanState(
+  statuses: PlanStatus[],
+  assetId: string,
+): PlanStatus['state'] | null {
+  const states = statuses.filter((s) => s.asset.id === assetId).map((s) => s.state);
+  return (['overdue', 'upcoming', 'ok'] as const).find((s) => states.includes(s)) ?? null;
+}
+
 const byId = (id: string) => ({ params: { path: { id_: id } } });
 
 export const maintenancesApi = {
@@ -119,9 +136,12 @@ export function useInvalidateAssets() {
 
 export const PLAN_STATE = {
   ok: { label: 'Al día', color: 'green' },
-  upcoming: { label: 'Próximo', color: 'orange' },
+  upcoming: { label: 'Próximo', color: 'yellow' },
   overdue: { label: 'Vencido', color: 'red' },
 } as const;
+
+/** Sin tarifa, el uso del activo no suma costo a los ciclos. */
+export const hasNoRate = (asset: Pick<Asset, 'rate'>) => Number(asset.rate) === 0;
 
 /** "Tractor 1 · Cambio de aceite: vencido (a las 1.250 h o el 01/03/2027)". */
 export function planAlertText(p: PlanStatus): string {

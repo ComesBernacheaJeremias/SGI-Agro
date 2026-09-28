@@ -1,11 +1,16 @@
-import { Group, Title } from '@mantine/core';
+import { Group, Text, Title } from '@mantine/core';
 import type { ReactNode } from 'react';
 
-/** Título de pantalla con acciones a la derecha (ej. botón "Nuevo"). */
-export function PageHeader({ title, actions }: { title: string; actions?: ReactNode }) {
+type Props = { title: string; subtitle?: ReactNode; actions?: ReactNode };
+
+/** Título de pantalla (con subtítulo opcional) y acciones a la derecha. */
+export function PageHeader({ title, subtitle, actions }: Props) {
   return (
-    <Group justify="space-between" mb="md" wrap="wrap">
-      <Title order={2}>{title}</Title>
+    <Group justify="space-between" align="flex-end" mb="lg" wrap="wrap">
+      <div>
+        <Title order={2}>{title}</Title>
+        {subtitle && <Text c="dimmed">{subtitle}</Text>}
+      </div>
       {actions && <Group gap="xs">{actions}</Group>}
     </Group>
   );

@@ -1,0 +1,63 @@
+/* Menú lateral oscuro: columna completa (con el logo arriba); solo el ítem activo lleva color. */
+
+.navbar {
+  background: var(--app-panel);
+  border-right: 0;
+  color: var(--app-panel-text);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 var(--mantine-spacing-sm);
+  font-size: var(--mantine-font-size-lg);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* En el celular el menú se abre debajo de la barra: el logo ya está en la barra */
+@media (max-width: 48em) {
+  .brand {
+    display: none;
+  }
+}
+
+.headerBrand {
+  font-weight: 700;
+  color: var(--mantine-color-brand-6);
+}
+
+.section {
+  padding: var(--mantine-spacing-md) var(--mantine-spacing-sm) 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--app-panel-text) 50%, transparent);
+}
+
+.navbar .link {
+  border-radius: var(--mantine-radius-sm);
+  color: var(--app-panel-text);
+}
+
+/* El router marca el ítem de la pantalla actual con aria-current="page".
+   Hover apenas visible, para que no compita con el ítem activo. */
+.navbar .link:hover:not([aria-current='page']) {
+  background: rgb(255 255 255 / 4%);
+  color: #fff;
+}
+
+.navbar .link[aria-current='page'] {
+  background: var(--mantine-color-green-6);
+  color: #fff;
+}
+
+.icon {
+  color: color-mix(in srgb, var(--app-panel-text) 55%, transparent);
+}
+
+.link[aria-current='page'] .icon {
+  color: #fff;
+}

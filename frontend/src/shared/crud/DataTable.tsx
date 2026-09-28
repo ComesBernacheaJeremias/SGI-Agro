@@ -25,6 +25,9 @@ export type Column<T> = {
   align?: 'left' | 'right' | 'center';
   /** Ocultar en pantallas chicas (celular). */
   hideOnMobile?: boolean;
+  /** No cortar el texto en dos líneas (fechas, códigos). Las columnas a la derecha
+   * (montos, cantidades) nunca se cortan. */
+  nowrap?: boolean;
 };
 
 type Props<T extends Entity> = {
@@ -38,6 +41,8 @@ type Props<T extends Entity> = {
   showActiveFilter?: boolean;
   /** Filtros extra propios de la pantalla (se muestran junto a la búsqueda). */
   filters?: ReactNode;
+  /** A la derecha de la fila del buscador (ej. el botón principal "Nuevo…"). */
+  actions?: ReactNode;
 };
 
 /** Tabla estándar de listados: búsqueda, activos/inactivos, orden, paginación. */
@@ -51,6 +56,7 @@ export function DataTable<T extends Entity>({
   showSearch = true,
   showActiveFilter = true,
   filters,
+  actions,
 }: Props<T>) {
   const totalPages = data ? Math.max(1, Math.ceil(data.total / data.page_size)) : 1;
 
@@ -73,18 +79,22 @@ export function DataTable<T extends Entity>({
           )}
           {filters}
         </Group>
-        {showActiveFilter && (
-          <SegmentedControl
-            size="xs"
-            value={list.active}
-            onChange={(value) => list.setActive(value as ActiveFilter)}
-            data={[
-              { value: 'true', label: 'Activos' },
-              { value: 'false', label: 'Inactivos' },
-              { value: 'all', label: 'Todos' },
-            ]}
-          />
-        )}
+        {/* ml="auto": si no entra en la fila, baja pero queda a la derecha */}
+        <Group gap="sm" wrap="wrap" ml="auto">
+          {showActiveFilter && (
+            <SegmentedControl
+              size="xs"
+              value={list.active}
+              onChange={(value) => list.setActive(value as ActiveFilter)}
+              data={[
+                { value: 'true', label: 'Activos' },
+                { value: 'false', label: 'Inactivos' },
+                { value: 'all', label: 'Todos' },
+              ]}
+            />
+          )}
+          {actions}
+        </Group>
       </Group>
 
       <Box pos="relative">
@@ -126,6 +136,9 @@ export function DataTable<T extends Entity>({
                       key={col.key}
                       ta={col.align}
                       visibleFrom={col.hideOnMobile ? 'sm' : undefined}
+                      style={
+                        col.nowrap || col.align === 'right' ? { whiteSpace: 'nowrap' } : undefined
+                      }
                     >
                       {col.render
                         ? col.render(row)

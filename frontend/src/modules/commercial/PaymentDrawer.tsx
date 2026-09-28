@@ -13,7 +13,7 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconBan, IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconTrash } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useEffect } from 'react';
 
@@ -242,12 +242,7 @@ export function PaymentDrawer({ direction, paymentId, partyId, opened, onClose }
           <>
             <HistoryButton table="payments" recordId={payment.id} />
             {canCancel && (
-              <Button
-                variant="subtle"
-                color="red"
-                leftSection={<IconBan size={16} />}
-                onClick={cancelPayment}
-              >
+              <Button variant="subtle" color="red" onClick={cancelPayment}>
                 Anular
               </Button>
             )}
@@ -349,7 +344,6 @@ export function PaymentDrawer({ direction, paymentId, partyId, opened, onClose }
             <Button
               variant="light"
               size="xs"
-              leftSection={<IconPlus size={14} />}
               onClick={() => form.setFieldValue('lines', [...values.lines, emptyMethod()])}
             >
               Agregar medio

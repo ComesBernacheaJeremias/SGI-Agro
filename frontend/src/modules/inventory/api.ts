@@ -10,7 +10,7 @@ import {
 import { api } from '@/api/client';
 import { unwrap } from '@/api/errors';
 import type { components, operations } from '@/api/schema';
-import { formatNumber } from '@/shared/format/number';
+import { formatMoney, formatNumber } from '@/shared/format/number';
 
 type S = components['schemas'];
 
@@ -137,15 +137,28 @@ export function useInvalidateInventory() {
     );
 }
 
-/** Aviso "Necesitás comprar" con los productos que quedaron en su mínimo o por debajo. */
+/** Color de los faltantes de stock (ámbar), en todo el sistema. */
+export const STOCK_ALERT_COLOR = 'yellow';
+
+/** Aviso "Necesitás comprar" con los productos que quedaron por debajo de su mínimo. */
 export function notifyStockAlerts(alerts: StockAlert[]): void {
   if (alerts.length === 0) return;
   notifications.show({
-    color: 'orange',
+    color: STOCK_ALERT_COLOR,
     title: 'Necesitás comprar',
     autoClose: 10_000,
     message: alerts.map(alertText).join(' · '),
   });
+}
+
+/**
+ * "Incluye $ 2.000,00 de producción propia (costo del ciclo, provisorio)".
+ * Ese valor es solo informativo (ADR-012): el stock contable la tiene a costo cero.
+ */
+export function ownProduceNote(value: string | number, provisional: boolean): string | null {
+  if (Number(value) === 0) return null;
+  const detail = provisional ? 'costo del ciclo, provisorio' : 'costo del ciclo';
+  return `Incluye ${formatMoney(value)} de producción propia (${detail})`;
 }
 
 export function alertText(a: StockAlert): string {

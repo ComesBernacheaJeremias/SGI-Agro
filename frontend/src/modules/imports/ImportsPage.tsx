@@ -6,13 +6,13 @@ import {
   Group,
   Loader,
   Paper,
-  SegmentedControl,
   Stack,
   Table,
+  Tabs,
   Text,
 } from '@mantine/core';
 import { useQueryClient } from '@tanstack/react-query';
-import { IconCheck, IconDownload, IconFileSpreadsheet, IconSearch } from '@tabler/icons-react';
+import { IconCheck, IconFileSpreadsheet } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { confirmAction, notifyError, notifySuccess } from '@/shared/ui/feedback';
@@ -98,9 +98,6 @@ function ImportPanel({ info }: { info: ImportInfo }) {
           </Table.Tbody>
         </Table>
         <Button
-          variant="light"
-          size="xs"
-          leftSection={<IconDownload size={14} />}
           loading={busy === 'template'}
           onClick={() => run('template', () => downloadTemplate(info.key))}
         >
@@ -125,12 +122,7 @@ function ImportPanel({ info }: { info: ImportInfo }) {
             clearable
             w={320}
           />
-          <Button
-            leftSection={<IconSearch size={16} />}
-            disabled={!file}
-            loading={busy === 'preview'}
-            onClick={preview}
-          >
+          <Button variant="default" disabled={!file} loading={busy === 'preview'} onClick={preview}>
             Revisar
           </Button>
         </Group>
@@ -150,7 +142,7 @@ function ImportPanel({ info }: { info: ImportInfo }) {
               Las {result.total} filas están bien. Tocá “Importar” para guardarlas.
             </Alert>
           ) : (
-            <Alert color="orange">
+            <Alert color="yellow">
               {result.valid} de {result.total} filas están bien; corregí las {result.errors.length}{' '}
               con error en el Excel y volvé a revisar. No se importa nada hasta que estén todas
               bien.
@@ -179,7 +171,7 @@ function ImportPanel({ info }: { info: ImportInfo }) {
             </Table>
           )}
           {ready && (
-            <Button mt="sm" color="green" loading={busy === 'confirm'} onClick={confirm}>
+            <Button mt="sm" loading={busy === 'confirm'} onClick={confirm}>
               Importar {result.valid} filas
             </Button>
           )}
@@ -192,27 +184,29 @@ function ImportPanel({ info }: { info: ImportInfo }) {
 /** Importar datos desde Excel (carga inicial). Solo aparecen las que el usuario puede hacer. */
 export function ImportsPage() {
   const { data: imports, isLoading } = useImports();
-  const [key, setKey] = useState<string | null>(null);
-  const selected = imports?.find((i) => i.key === (key ?? imports[0]?.key));
   return (
     <>
-      <PageHeader title="Importar datos" />
+      <PageHeader
+        title="Importar datos"
+        subtitle="Orden sugerido: productos y clientes/proveedores primero; después stock inicial y saldos."
+      />
       {isLoading && <Loader />}
       {imports?.length === 0 && <Text c="dimmed">No tenés importaciones disponibles.</Text>}
-      {imports && selected && (
-        <Stack>
-          <SegmentedControl
-            data={imports.map((i) => ({ value: i.key, label: i.title }))}
-            value={selected.key}
-            onChange={setKey}
-            style={{ alignSelf: 'flex-start' }}
-          />
-          <Text size="sm" c="dimmed">
-            Orden sugerido: productos y clientes/proveedores primero; después stock inicial y
-            saldos.
-          </Text>
-          <ImportPanel key={selected.key} info={selected} />
-        </Stack>
+      {imports?.[0] && (
+        <Tabs defaultValue={imports[0].key} keepMounted={false}>
+          <Tabs.List mb="md">
+            {imports.map((i) => (
+              <Tabs.Tab key={i.key} value={i.key}>
+                {i.title}
+              </Tabs.Tab>
+            ))}
+          </Tabs.List>
+          {imports.map((i) => (
+            <Tabs.Panel key={i.key} value={i.key}>
+              <ImportPanel info={i} />
+            </Tabs.Panel>
+          ))}
+        </Tabs>
       )}
     </>
   );

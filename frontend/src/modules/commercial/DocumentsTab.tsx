@@ -36,7 +36,7 @@ function StatusBadge({ doc }: { doc: DocumentSummary }) {
     );
   const overdue = doc.due_date < today();
   return (
-    <Badge color={overdue ? 'red' : 'orange'} variant="light">
+    <Badge color={overdue ? 'red' : 'gray'} variant="light">
       {overdue ? 'Vencida' : 'Pendiente'}
     </Badge>
   );
@@ -47,20 +47,22 @@ type DocumentsProps = { direction: Direction; onOpen: (doc: DocumentSummary) => 
 /** Listado de compras o ventas. */
 export function DocumentsTab({ direction, onOpen }: DocumentsProps) {
   const list = useListState();
-  const [onlyPending, setOnlyPending] = useState('all');
+  const [show, setShow] = useState<'all' | 'pending' | 'overdue'>('all');
   const { data: options } = useCommercialOptions();
   const { data, isFetching } = useDocuments({
     direction,
     q: list.params.q,
-    only_pending: onlyPending === 'pending',
+    only_pending: show === 'pending',
+    only_overdue: show === 'overdue',
     page: list.page,
     page_size: 50,
   });
   const columns: Column<DocumentSummary>[] = [
-    { key: 'date', header: 'Fecha', render: (d) => formatDate(d.date) },
+    { key: 'date', header: 'Fecha', nowrap: true, render: (d) => formatDate(d.date) },
     {
       key: 'invoice_label',
       header: 'Comprobante',
+      nowrap: true,
       render: (d) =>
         d.has_invoice
           ? d.invoice_label
@@ -74,6 +76,7 @@ export function DocumentsTab({ direction, onOpen }: DocumentsProps) {
     {
       key: 'due_date',
       header: 'Vence',
+      nowrap: true,
       hideOnMobile: true,
       render: (d) => formatDate(d.due_date),
     },
@@ -90,7 +93,7 @@ export function DocumentsTab({ direction, onOpen }: DocumentsProps) {
       hideOnMobile: true,
       render: (d) => (Number(d.pending) > 0 ? formatMoney(d.pending) : ''),
     },
-    { key: 'status', header: '', render: (d) => <StatusBadge doc={d} /> },
+    { key: 'status', header: 'Estado', render: (d) => <StatusBadge doc={d} /> },
   ];
   return (
     <DataTable
@@ -104,14 +107,15 @@ export function DocumentsTab({ direction, onOpen }: DocumentsProps) {
       filters={
         <SegmentedControl
           size="xs"
-          value={onlyPending}
+          value={show}
           onChange={(v) => {
-            setOnlyPending(v);
+            setShow(v as typeof show);
             list.setPage(1);
           }}
           data={[
             { value: 'all', label: 'Todas' },
             { value: 'pending', label: direction === 'sale' ? 'A cobrar' : 'A pagar' },
+            { value: 'overdue', label: 'Vencidas' },
           ]}
         />
       }
@@ -126,7 +130,7 @@ export function PaymentsTab({ direction, onOpen }: PaymentsProps) {
   const list = useListState();
   const { data, isFetching } = usePayments({ direction, page: list.page, page_size: 50 });
   const columns: Column<Payment>[] = [
-    { key: 'date', header: 'Fecha', render: (p) => formatDate(p.date) },
+    { key: 'date', header: 'Fecha', nowrap: true, render: (p) => formatDate(p.date) },
     { key: 'number', header: 'Número' },
     {
       key: 'party',

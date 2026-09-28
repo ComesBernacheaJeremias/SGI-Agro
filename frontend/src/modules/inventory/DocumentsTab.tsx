@@ -39,7 +39,7 @@ export function DocumentsTab({ onOpen }: Props) {
     };
 
   const columns: Column<DocumentSummary>[] = [
-    { key: 'date', header: 'Fecha', render: (d) => formatDate(d.date) },
+    { key: 'date', header: 'Fecha', nowrap: true, render: (d) => formatDate(d.date) },
     { key: 'number', header: 'Número' },
     { key: 'type', header: 'Tipo', render: (d) => labelOf(options?.document_types, d.type) },
     {

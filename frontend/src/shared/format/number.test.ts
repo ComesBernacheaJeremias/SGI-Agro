@@ -31,4 +31,9 @@ describe('formatNumber', () => {
     expect(formatMoney('10000')).toBe('$ 10.000,00');
     expect(formatMoney(null)).toBe('');
   });
+
+  it('formatMoney pone el menos delante del $', () => {
+    expect(formatMoney(-57500)).toBe('-$ 57.500,00');
+    expect(formatMoney('-0.001')).toBe('$ 0,00');
+  });
 });

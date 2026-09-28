@@ -38,8 +38,9 @@ export function formatNumber(
   return Number.isFinite(number) ? formatters[kind].format(number) : '';
 }
 
-/** Formato de moneda: $ 1.234,56 */
+/** Formato de moneda: $ 1.234,56 · negativos: -$ 1.234,56 */
 export function formatMoney(value: number | string | null | undefined): string {
   const formatted = formatNumber(value, 'price');
-  return formatted && `$ ${formatted}`;
+  if (!formatted) return '';
+  return formatted.startsWith('-') ? `-$ ${formatted.slice(1)}` : `$ ${formatted}`;
 }

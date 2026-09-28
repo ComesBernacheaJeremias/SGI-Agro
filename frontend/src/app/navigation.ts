@@ -1,4 +1,4 @@
-/** Menú principal: un único lugar donde se declaran los módulos (ruta, nombre, ícono, etapa). */
+/** Menú principal: un único lugar donde se declaran los módulos (ruta, nombre, ícono, sección). */
 import {
   IconBuildingWarehouse,
   IconCash,
@@ -15,81 +15,88 @@ import {
   type Icon,
 } from '@tabler/icons-react';
 
+export type NavSection = 'daily' | 'analysis' | 'admin';
+
+export const NAV_SECTIONS: { key: NavSection; label: string }[] = [
+  { key: 'daily', label: 'Día a día' },
+  { key: 'analysis', label: 'Análisis' },
+  { key: 'admin', label: 'Administración' },
+];
+
 export type NavItem = {
   path: string;
   label: string;
   icon: Icon;
-  /** Etapa del roadmap en que se implementa (mientras tanto muestra "Próximamente"). */
-  stage: string;
+  section: NavSection;
   /** Permiso necesario para ver el ítem (sin permiso: oculto). */
   permission?: string;
 };
 
 export const NAV_ITEMS: NavItem[] = [
-  { path: '/', label: 'Tablero', icon: IconLayoutDashboard, stage: 'F5' },
+  { path: '/', label: 'Tablero', icon: IconLayoutDashboard, section: 'daily' },
   {
     path: '/produccion',
     label: 'Producción',
     icon: IconPlant2,
-    stage: 'F3',
+    section: 'daily',
     permission: 'production:read',
   },
   {
     path: '/elaboracion',
     label: 'Elaboración',
     icon: IconFlask,
-    stage: 'F3',
+    section: 'daily',
     permission: 'manufacturing:read',
   },
   {
     path: '/inventario',
     label: 'Inventario',
     icon: IconBuildingWarehouse,
-    stage: 'F2',
+    section: 'daily',
     permission: 'inventory:read',
   },
   {
     path: '/comercial',
     label: 'Comercial y caja',
     icon: IconCash,
-    stage: 'F4',
+    section: 'daily',
     permission: 'commercial:read',
   },
   {
     path: '/activos',
     label: 'Activos',
     icon: IconTractor,
-    stage: 'F3',
+    section: 'daily',
     permission: 'assets:read',
   },
   {
     path: '/costos',
     label: 'Costos y rentabilidad',
     icon: IconChartBar,
-    stage: 'F5',
+    section: 'analysis',
     permission: 'costs:read',
   },
-  { path: '/reportes', label: 'Reportes', icon: IconReport, stage: 'F5' },
+  { path: '/reportes', label: 'Reportes', icon: IconReport, section: 'analysis' },
   {
     path: '/maestros',
     label: 'Maestros',
     icon: IconDatabase,
-    stage: 'F1',
+    section: 'admin',
     permission: 'masterdata:read',
   },
-  { path: '/importar', label: 'Importar datos', icon: IconFileImport, stage: 'F7' },
+  { path: '/importar', label: 'Importar datos', icon: IconFileImport, section: 'admin' },
   {
     path: '/usuarios',
     label: 'Usuarios y roles',
     icon: IconUsers,
-    stage: 'F1',
+    section: 'admin',
     permission: 'users:read',
   },
   {
     path: '/historial',
     label: 'Historial',
     icon: IconHistory,
-    stage: 'F1',
+    section: 'admin',
     permission: 'audit:read',
   },
 ];

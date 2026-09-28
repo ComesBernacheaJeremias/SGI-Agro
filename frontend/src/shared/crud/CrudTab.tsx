@@ -1,5 +1,4 @@
-import { Button, Group } from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
+import { Button } from '@mantine/core';
 import { Fragment, type ReactNode, useState } from 'react';
 
 import { type Column, DataTable } from './DataTable';
@@ -21,9 +20,14 @@ type Props<T extends Entity, C, U> = {
   /** Parámetros extra de la consulta (valores de los filtros propios). */
   extraParams?: Record<string, unknown>;
   renderDrawer: (props: DrawerProps<T>) => ReactNode;
+  /**
+   * Pantalla sin pestañas: arma el título con el botón "Nuevo" al lado. Sin esto (pestañas),
+   * el botón va a la derecha de la fila del buscador.
+   */
+  header?: (newButton: ReactNode) => ReactNode;
 };
 
-/** Pestaña estándar de un maestro: botón "Nuevo" + tabla + panel de alta/edición. */
+/** Listado estándar de un maestro: botón "Nuevo" + tabla + panel de alta/edición. */
 export function CrudTab<T extends Entity, C, U>({
   resource,
   columns,
@@ -34,6 +38,7 @@ export function CrudTab<T extends Entity, C, U>({
   filters,
   extraParams,
   renderDrawer,
+  header,
 }: Props<T, C, U>) {
   const list = useListState(defaultSort);
   const { data, isFetching } = useResourceList(resource, { ...list.params, ...extraParams });
@@ -48,15 +53,11 @@ export function CrudTab<T extends Entity, C, U>({
     setSession((n) => n + 1);
   }
 
+  const newButton = newLabel && canCreate && <Button onClick={() => open(null)}>{newLabel}</Button>;
+
   return (
     <>
-      {newLabel && canCreate && (
-        <Group justify="flex-end" mb="sm">
-          <Button leftSection={<IconPlus size={16} />} onClick={() => open(null)}>
-            {newLabel}
-          </Button>
-        </Group>
-      )}
+      {header?.(newButton)}
       <DataTable
         columns={columns}
         list={list}
@@ -65,6 +66,7 @@ export function CrudTab<T extends Entity, C, U>({
         onRowClick={open}
         searchPlaceholder={searchPlaceholder}
         filters={filters?.(list)}
+        actions={header ? undefined : newButton}
       />
       <Fragment key={session}>
         {renderDrawer({ record, opened, onClose: () => setOpened(false) })}

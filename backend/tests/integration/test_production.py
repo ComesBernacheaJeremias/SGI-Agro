@@ -319,6 +319,29 @@ def test_harvest_enters_stock_with_batch_and_yield(farm: Farm) -> None:
     assert Decimal(summary["cost_per_unit"]) == Decimal("200.00")  # $2.000 / 10 cajones
 
 
+def test_harvest_value_by_cycle_cost_is_only_informative(farm: Farm) -> None:
+    """ADR-012: el stock sigue a costo cero; el valor por costo del ciclo solo se muestra."""
+    cycle = farm.cycle(area="1.2")
+    farm.apply(cycle["id"], liters="2")  # $2.000 de costo
+    farm.harvest(cycle["id"], boxes="10")  # $200 por cajón
+
+    stock = farm.c.get("/api/v1/stock", params={"product_id": farm.tomato}).json()
+    row = stock["items"][0]
+    assert Decimal(row["value"]) == 0 and Decimal(row["avg_cost"]) == 0  # contable: cero
+    assert Decimal(row["estimated_value"]) == Decimal("2000.00")
+    assert row["estimated_provisional"] is True  # ciclo en curso
+    assert Decimal(stock["total_value"]) == 0
+    assert Decimal(stock["own_produce_value"]) == Decimal("2000.00")
+
+    kardex = farm.c.get("/api/v1/stock/kardex", params={"product_id": farm.tomato}).json()
+    assert all(Decimal(r["unit_cost"]) == 0 for r in kardex["rows"])
+
+    farm.c.post(f"/api/v1/crop-cycles/{cycle['id']}/finish", json={"end_date": day(-1)})
+    board = farm.c.get("/api/v1/dashboard").json()["stock"]
+    assert Decimal(board["own_produce_value"]) == Decimal("2000.00")
+    assert board["own_produce_provisional"] is False  # ciclo finalizado
+
+
 def test_field_book_lists_operations_in_order(farm: Farm) -> None:
     cycle = farm.cycle()
     farm.apply(cycle["id"])

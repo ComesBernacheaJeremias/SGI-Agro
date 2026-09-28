@@ -12,7 +12,6 @@ import {
   TextInput,
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
-import { IconBook, IconLock, IconLockOpen } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 
@@ -193,29 +192,16 @@ export function CycleDrawer({ cycle, opened, onClose, onOpenFieldBook }: Props) 
         cycle && (
           <>
             <HistoryButton table="crop_cycles" recordId={cycle.id} />
-            <Button
-              variant="subtle"
-              leftSection={<IconBook size={16} />}
-              onClick={() => onOpenFieldBook(cycle)}
-            >
+            <Button variant="subtle" onClick={() => onOpenFieldBook(cycle)}>
               Cuaderno
             </Button>
             {!finished && canWrite && (
-              <Button
-                variant="subtle"
-                color="orange"
-                leftSection={<IconLock size={16} />}
-                onClick={openFinish}
-              >
+              <Button variant="subtle" color="orange" onClick={openFinish}>
                 Finalizar
               </Button>
             )}
             {finished && can('production:reopen_cycle') && (
-              <Button
-                variant="subtle"
-                leftSection={<IconLockOpen size={16} />}
-                onClick={openReopen}
-              >
+              <Button variant="subtle" onClick={openReopen}>
                 Reabrir
               </Button>
             )}

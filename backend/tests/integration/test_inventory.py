@@ -315,7 +315,17 @@ def test_services_do_not_have_stock(inv: Inventory) -> None:
 # --- Alertas de mínimo ---
 
 
-def test_alert_when_stock_reaches_minimum(inv: Inventory) -> None:
+def test_no_alert_when_stock_equals_minimum(inv: Inventory) -> None:
+    product = inv.product("Mancozeb", min_stock="5")
+    inv.doc("manual_in", [inv.line(product, "10", cost="1")])
+
+    output = inv.doc("manual_out", [inv.line(product, "5")], when=-5)
+
+    assert output.json()["alerts"] == []
+    assert inv.client.get("/api/v1/stock/alerts").json() == []
+
+
+def test_alert_when_stock_goes_below_minimum(inv: Inventory) -> None:
     product = inv.product("Clorpirifos", min_stock="5")
     first = inv.doc("manual_in", [inv.line(product, "10", cost="1")])
 
@@ -331,6 +341,16 @@ def test_alert_when_stock_reaches_minimum(inv: Inventory) -> None:
 
 
 # --- Consultas ---
+
+
+def test_total_value_covers_all_pages(inv: Inventory) -> None:
+    inv.doc("manual_in", [inv.line(inv.product("Abono A"), "10", cost="100")])
+    inv.doc("manual_in", [inv.line(inv.product("Abono B"), "2", cost="50")])
+
+    page = inv.client.get("/api/v1/stock", params={"page_size": 1}).json()
+
+    assert len(page["items"]) == 1
+    assert Decimal(page["total_value"]) == Decimal("1100.00")
 
 
 def test_stock_of_one_product_by_warehouse(inv: Inventory) -> None:

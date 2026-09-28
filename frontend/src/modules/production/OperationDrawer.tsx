@@ -13,7 +13,6 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useQuery } from '@tanstack/react-query';
-import { IconBan } from '@tabler/icons-react';
 import { useEffect } from 'react';
 
 import { useCan } from '@/app/auth/session';
@@ -237,12 +236,7 @@ export function OperationDrawer({ operationId, harvest, defaultCycleId, opened, 
           <>
             <HistoryButton table="field_operations" recordId={existing.id} />
             {existing.editable && can('production:write') && (
-              <Button
-                variant="subtle"
-                color="red"
-                leftSection={<IconBan size={16} />}
-                onClick={cancelOperation}
-              >
+              <Button variant="subtle" color="red" onClick={cancelOperation}>
                 Anular
               </Button>
             )}

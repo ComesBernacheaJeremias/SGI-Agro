@@ -15,7 +15,7 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconEdit, IconPlus, IconTool, IconTrash } from '@tabler/icons-react';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { Fragment, useState } from 'react';
 
@@ -334,20 +334,11 @@ export function AssetSheet({ asset, onClose, onEdit }: Props) {
             </Text>
             <Group gap="xs">
               {canWrite && (
-                <Button
-                  size="xs"
-                  leftSection={<IconTool size={14} />}
-                  onClick={() => setMaintenance({ record: null })}
-                >
+                <Button size="xs" onClick={() => setMaintenance({ record: null })}>
                   Registrar mantenimiento
                 </Button>
               )}
-              <Button
-                size="xs"
-                variant="default"
-                leftSection={<IconEdit size={14} />}
-                onClick={() => onEdit(asset)}
-              >
+              <Button size="xs" variant="default" onClick={() => onEdit(asset)}>
                 Editar datos
               </Button>
             </Group>
@@ -487,13 +478,7 @@ export function AssetSheet({ asset, onClose, onEdit }: Props) {
                 </Table>
               )}
               {canWrite && (
-                <Button
-                  mt="sm"
-                  size="xs"
-                  variant="light"
-                  leftSection={<IconPlus size={14} />}
-                  onClick={() => setPlan({ record: null })}
-                >
+                <Button mt="sm" size="xs" variant="light" onClick={() => setPlan({ record: null })}>
                   Nuevo plan
                 </Button>
               )}
@@ -584,13 +569,7 @@ export function AssetSheet({ asset, onClose, onEdit }: Props) {
                 </Text>
               )}
               {canWrite && (
-                <Button
-                  mt="sm"
-                  size="xs"
-                  variant="light"
-                  leftSection={<IconPlus size={14} />}
-                  onClick={() => setReading(true)}
-                >
+                <Button mt="sm" size="xs" variant="light" onClick={() => setReading(true)}>
                   Cargar lectura
                 </Button>
               )}

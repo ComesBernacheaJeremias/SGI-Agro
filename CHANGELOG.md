@@ -12,6 +12,12 @@ Se actualiza al cerrar cada etapa a partir de los commits (Conventional Commits)
 - GitHub: CI (tests, tipos, lint, build, auditoría de dependencias, gitleaks) y Dependabot.
 - Comandos de consola para administrar usuarios.
 
+### Changed (diseño)
+- Diseño visual propio (paleta "Monte"): menú oscuro agrupado, tablero con números clave, login nuevo, fuente IBM Plex Sans, color solo con significado, sin íconos en botones con texto.
+- Montos negativos como `-$ 57.500,00`; faltantes de stock solo por debajo del mínimo (no igual).
+- Producción propia en stock valorizada por el costo de su ciclo (solo informativo, "provisorio" si el ciclo sigue en curso) en Inventario y el tablero.
+- Ventas/compras: filtro "Vencidas" y columna Estado. Activos: estado, mantenimiento y aviso "Sin tarifa". Inventario: valor total real (todas las páginas). Historial con "antes → después". Botón principal siempre en el mismo lugar; scroll horizontal solo en tablas.
+
 ### Removed
 - Carga sin conexión (cola de pendientes, datos guardados en el dispositivo, ingreso sin señal): el sistema se usa con internet o datos del celular. Quedan la app instalable, el aviso "Sin conexión" y el id del dispositivo que evita duplicados al reintentar (ADR-024).
 

@@ -1,5 +1,4 @@
 import { Button, Group, Tabs } from '@mantine/core';
-import { IconPlant2, IconPlus, IconTractor } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { useCan } from '@/app/auth/session';
@@ -29,24 +28,13 @@ export function ProductionPage() {
         actions={
           canWrite && (
             <Group gap="xs">
-              <Button
-                leftSection={<IconTractor size={16} />}
-                onClick={() => setOperation({ id: null, harvest: false })}
-              >
+              <Button onClick={() => setOperation({ id: null, harvest: false })}>
                 Cargar labor
               </Button>
-              <Button
-                variant="light"
-                leftSection={<IconPlant2 size={16} />}
-                onClick={() => setOperation({ id: null, harvest: true })}
-              >
+              <Button variant="light" onClick={() => setOperation({ id: null, harvest: true })}>
                 Cargar cosecha
               </Button>
-              <Button
-                variant="default"
-                leftSection={<IconPlus size={16} />}
-                onClick={() => setCycle({ record: null })}
-              >
+              <Button variant="default" onClick={() => setCycle({ record: null })}>
                 Abrir ciclo
               </Button>
             </Group>

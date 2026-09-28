@@ -1,5 +1,5 @@
 import { ActionIcon, Button, Group, Select, Stack, Text } from '@mantine/core';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconTrash } from '@tabler/icons-react';
 
 import { NumberInput } from '@/shared/components/NumberInput';
 
@@ -73,7 +73,6 @@ export function ConversionsField({ value, onChange, units, baseUnitId, disabled 
         <Button
           variant="light"
           size="xs"
-          leftSection={<IconPlus size={14} />}
           onClick={() => onChange([...value, { unit_id: '', quantity: null }])}
           disabled={!baseUnitId}
           w="fit-content"

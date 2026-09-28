@@ -1,5 +1,5 @@
 import { ActionIcon, Button, Group, Paper, Select, Stack, Text, TextInput } from '@mantine/core';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconTrash } from '@tabler/icons-react';
 
 import type { Unit } from '@/modules/masterdata/api';
 import { ProductSelect } from '@/modules/masterdata/ProductSelect';
@@ -192,7 +192,6 @@ export function DocumentLinesField({
           <Button
             variant="light"
             size="xs"
-            leftSection={<IconPlus size={14} />}
             onClick={() => onChange([...value, emptyDocLine('product')])}
           >
             Agregar producto
@@ -200,7 +199,6 @@ export function DocumentLinesField({
           <Button
             variant="light"
             size="xs"
-            leftSection={<IconPlus size={14} />}
             onClick={() => onChange([...value, emptyDocLine('expense')])}
           >
             {isPurchase ? 'Agregar gasto o servicio' : 'Agregar concepto'}

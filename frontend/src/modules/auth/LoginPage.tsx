@@ -3,9 +3,9 @@ import {
   Anchor,
   Button,
   Center,
-  Paper,
   PasswordInput,
   Stack,
+  Text,
   TextInput,
   Title,
 } from '@mantine/core';
@@ -15,6 +15,8 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { errorMessage } from '@/api/errors';
 import { login } from '@/app/auth/auth';
 import { useSession } from '@/app/auth/session';
+
+import classes from './LoginPage.module.css';
 
 export function LoginPage() {
   const session = useSession();
@@ -44,13 +46,28 @@ export function LoginPage() {
   }
 
   return (
-    <Center mih="100vh" p="md" bg="gray.0">
-      <Paper withBorder shadow="sm" p="xl" radius="md" w="100%" maw={380}>
-        <form onSubmit={handleSubmit}>
+    <div className={classes.layout}>
+      <div className={classes.panel}>
+        <div className={classes.name}>SGI Agro</div>
+        <div>
+          <div className={classes.claim}>Costos y rentabilidad del campo, en un solo lugar.</div>
+          <Text className={classes.detail} mt="md" maw={420}>
+            Producción, stock, compras y ventas, caja y maquinaria.
+          </Text>
+        </div>
+        <Text size="xs" className={classes.detail}>
+          Sistema de gestión integral
+        </Text>
+      </div>
+      <Center p="xl" className={classes.form}>
+        <form onSubmit={handleSubmit} style={{ width: '100%', maxWidth: 360 }}>
           <Stack>
-            <Title order={2} ta="center" c="green.8">
-              SGI Agro
-            </Title>
+            <div>
+              <Title order={2}>Ingresar</Title>
+              <Text c="dimmed" size="sm">
+                Con tu usuario y contraseña.
+              </Text>
+            </div>
             {error && (
               <Alert color="red" variant="light">
                 {error}
@@ -79,7 +96,7 @@ export function LoginPage() {
             </Anchor>
           </Stack>
         </form>
-      </Paper>
-    </Center>
+      </Center>
+    </div>
   );
 }

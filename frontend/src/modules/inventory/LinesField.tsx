@@ -1,5 +1,5 @@
 import { ActionIcon, Button, Group, Paper, Select, Stack, Text } from '@mantine/core';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconTrash } from '@tabler/icons-react';
 
 import type { Unit } from '@/modules/masterdata/api';
 import { ProductSelect } from '@/modules/masterdata/ProductSelect';
@@ -134,12 +134,7 @@ export function LinesField({
       )}
       <Group justify="space-between">
         {!readOnly && (
-          <Button
-            variant="light"
-            size="xs"
-            leftSection={<IconPlus size={14} />}
-            onClick={() => onChange([...value, emptyLine()])}
-          >
+          <Button variant="light" size="xs" onClick={() => onChange([...value, emptyLine()])}>
             Agregar producto
           </Button>
         )}

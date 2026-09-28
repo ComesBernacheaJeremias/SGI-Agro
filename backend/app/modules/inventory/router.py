@@ -33,7 +33,7 @@ from app.modules.inventory.schemas import (
     InventoryOptions,
     KardexOut,
     StockAlertOut,
-    StockRowOut,
+    StockPage,
 )
 from app.modules.inventory.service import (
     DocumentFilters,
@@ -43,6 +43,7 @@ from app.modules.inventory.service import (
     to_summary,
 )
 from app.modules.masterdata.schemas import Option
+from app.modules.production.valuation import own_produce_total, own_produce_values
 
 documents_router = APIRouter(prefix="/api/v1/stock-documents", tags=["inventory"])
 stock_router = APIRouter(prefix="/api/v1/stock", tags=["inventory"])
@@ -133,17 +134,36 @@ def list_stock(
     below_min: bool = False,
     include_zero: bool = False,
     product_id: UUID | None = None,
-) -> Page[StockRowOut]:
+) -> StockPage:
     filters = StockFilters(
         at, q, category_id, warehouse_id, by_warehouse, below_min, include_zero, product_id
     )
-    items, total = StockQueries(db).stock(filters, page)
-    return Page(items=items, total=total, page=page.page, page_size=page.page_size)
+    queries = StockQueries(db)
+    items, total = queries.stock(filters, page)
+    # Producción propia: valor informativo por costo del ciclo (no toca `value` ni costos)
+    estimates = own_produce_values(db, at=at, warehouse_id=warehouse_id, by_warehouse=by_warehouse)
+    for item in items:
+        estimate = estimates.get((item.product.id, item.warehouse.id if item.warehouse else None))
+        if estimate:
+            item.estimated_value = estimate.value
+            item.estimated_provisional = estimate.provisional
+    own = own_produce_total(
+        db, at=at, warehouse_id=warehouse_id, product_ids=queries.product_ids(filters)
+    )
+    return StockPage(
+        items=items,
+        total=total,
+        page=page.page,
+        page_size=page.page_size,
+        total_value=queries.total_value(filters),
+        own_produce_value=own.value,
+        own_produce_provisional=own.provisional,
+    )
 
 
 @stock_router.get("/alerts")
 def stock_alerts(db: DbSession, _: Reader) -> list[StockAlertOut]:
-    """Productos en su stock mínimo o por debajo ("Necesitás comprar")."""
+    """Productos por debajo de su stock mínimo ("Necesitás comprar")."""
     return StockQueries(db).alerts()
 
 

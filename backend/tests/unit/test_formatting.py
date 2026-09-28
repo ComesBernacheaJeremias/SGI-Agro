@@ -13,7 +13,7 @@ def test_money_and_quantity_use_argentine_format() -> None:
 def test_zero_never_has_minus_sign() -> None:
     assert format_money(Decimal("-0.001")) == "$ 0,00"
     assert format_quantity(Decimal("-0")) == "0,00"
-    assert format_money(Decimal("-1.5")) == "$ -1,50"
+    assert format_money(Decimal("-1.5")) == "-$ 1,50"
 
 
 def test_date() -> None:
