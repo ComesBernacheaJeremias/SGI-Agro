@@ -41,7 +41,7 @@ Justificación: [[ADR-002-Stack-Python-FastAPI-React]].
 | Modales / confirmaciones | @mantine/modals | "¿Estás seguro?" |
 | Íconos | @tabler/icons-react | |
 | Cliente de API | Generado desde OpenAPI (`openapi-typescript` + `openapi-fetch`) | Tipos del backend sin escribirlos a mano |
-| Offline | vite-plugin-pwa + Dexie (IndexedDB) | [[Offline-y-sincronizacion]] |
+| App instalable | vite-plugin-pwa (sin carga sin conexión) | [[ADR-024-Sin-carga-offline]] |
 | Calidad | ESLint, Prettier, Vitest | |
 
 ## Entorno y deploy

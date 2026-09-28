@@ -5,6 +5,25 @@ Se actualiza al cerrar cada etapa a partir de los commits (Conventional Commits)
 
 ## [Unreleased]
 
+### Security
+- Registro de accesos (Historial → Accesos), tope de intentos por IP y tope general de pedidos.
+- Cerrar sesiones de un usuario; cambiar la contraseña cierra las demás sesiones; al salir se borran los datos del dispositivo.
+- Producción: CSP, HSTS, tope de 10 MB, API sin root, usuario de base sin superusuario, arranque bloqueado con secretos débiles, `harden.sh` para el servidor.
+- GitHub: CI (tests, tipos, lint, build, auditoría de dependencias, gitleaks) y Dependabot.
+- Comandos de consola para administrar usuarios.
+
+### Removed
+- Carga sin conexión (cola de pendientes, datos guardados en el dispositivo, ingreso sin señal): el sistema se usa con internet o datos del celular. Quedan la app instalable, el aviso "Sin conexión" y el id del dispositivo que evita duplicados al reintentar (ADR-024).
+
+### Fixed
+- "$ -0,00" en el tablero (y en cualquier número redondeado a cero).
+- "por hora" / "por km" en maquinaria y activos; rinde del ciclo con unidad.
+
+### Changed
+- Insumos de una labor: solo insumos, semielaborados y terminados; se propone el almacén con stock y se ve el stock de cada almacén.
+- Orden del catálogo de reportes y de las importaciones; destino de gastos sin repetir el lote; búsqueda del manual por comienzo de palabra; dispositivo resumido en Accesos; tarjetas de ciclo más anchas; aviso de la labor que se actualiza al corregir.
+- IVA del producto en compras y ventas; números sin ",00" al escribir (punto o coma = coma decimal); "horas"/"km" y planes por km en rodados.
+
 ## [0.8.0] - 2026-09-27 — F7 Puesta en marcha (sin el deploy real)
 
 ### Added

@@ -67,7 +67,7 @@ def asset_costs_report(db: Session, p: ReportParams) -> TableReport:
             ReportColumn(key="expenses", label="Gastos (compras y caja)", kind="money"),
             ReportColumn(key="parts", label="Repuestos", kind="money"),
             ReportColumn(key="total", label="Gasto real", kind="money"),
-            ReportColumn(key="real_rate", label="Costo real por h/km", kind="money"),
+            ReportColumn(key="real_rate", label="Costo real (por hora o km)", kind="money"),
             ReportColumn(key="rate", label="Tarifa", kind="money"),
             ReportColumn(key="diff", label="Real vs. tarifa", kind="percent"),
         ],

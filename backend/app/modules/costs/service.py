@@ -18,6 +18,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.errors import NotFoundError
+from app.modules.assets.models import meter_unit
 from app.modules.commercial.sales import sale_facts
 from app.modules.costs.facts import (
     ExpenseScope,
@@ -104,7 +105,7 @@ class CostQueries:
             by_product[(f.product_name, f.unit)][1] += f.cost
         by_asset: dict[tuple[str, str], list[Decimal]] = defaultdict(lambda: [ZERO, ZERO])
         for m in machinery:
-            unit = "km" if m.meter == "km" else "h"
+            unit = meter_unit(m.meter)
             by_asset[(m.asset_name, unit)][0] += m.usage
             by_asset[(m.asset_name, unit)][1] += m.cost
 

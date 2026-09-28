@@ -106,6 +106,8 @@ Reglas implementadas:
 
 Frontend `modules/commercial/`: pantalla **Comercial y caja** con pestañas Ventas, Cobros, Compras y gastos, Pagos, Cuentas corrientes (saldos con antigüedad + resumen por tercero con acceso a cada comprobante y "Nuevo cobro/pago"), Caja y bancos (saldos por cuenta, movimientos, resumen de una cuenta) y Configuración (cajas/bancos y categorías de gasto). El cobro/pago lista los pendientes del tercero con "Imputar a los más viejos". En la venta de producción propia se puede elegir la partida (`GET /api/v1/stock/batches`: partidas con stock a la fecha; vacío = las más antiguas). Caja y bancos muestra saldos a hoy o a una fecha.
 
+**Ajuste 27/09:** al elegir un producto en una compra o venta, la línea toma la alícuota de IVA del producto (se puede cambiar).
+
 **Agregado en F5:**
 - **Comprobante asociado** en NC/ND (`related_document_id`): la NC se aplica sola a esa factura (baja su pendiente); no puede superar lo que queda sin otras NC; si la factura ya estaba cobrada/pagada, el excedente del cobro/pago queda como anticipo. Una factura con NC asociadas no se anula (primero las NC). La NC sin comprobante asociado cuenta como saldo a favor ("Anticipos y NC sin aplicar").
 - **NC de venta con partida:** la devolución vuelve a la partida elegida (la lista incluye partidas sin stock) y resta ingresos a ese ciclo.
@@ -115,3 +117,4 @@ Tests: `tests/integration/test_commercial.py` (27).
 Pendiente / diferido:
 - Margen estimado al cargar la venta (hoy se ve en el reporte Margen por producto).
 
+**Ajuste 27/09 (prueba en Chrome):** el destino de un gasto muestra el nombre del ciclo sin repetir el lote.

@@ -27,8 +27,11 @@ export function useAssetOptions() {
   });
 }
 
-/** "h" o "km" según el medidor del activo. */
-export const meterUnit = (meter: string) => (meter === 'km' ? 'km' : 'h');
+/** "horas" o "km" según el medidor del activo (junto a una cantidad). */
+export const meterUnit = (meter: string) => (meter === 'km' ? 'km' : 'horas');
+
+/** "por hora" o "por km" (tarifas). */
+export const meterRate = (meter: string) => (meter === 'km' ? 'por km' : 'por hora');
 
 // --- Uso y mantenimiento (F6) ---
 

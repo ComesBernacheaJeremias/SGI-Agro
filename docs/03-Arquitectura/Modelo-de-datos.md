@@ -9,7 +9,7 @@ estado: preliminar
 > Vista conceptual. Cuando exista código, la **fuente de verdad del esquema son los modelos SQLAlchemy + migraciones Alembic**; esta nota se actualiza con los cambios relevantes.
 
 ## Convenciones
-- PK `id UUID` (UUIDv7, generable en el cliente → carga offline).
+- PK `id UUID` (UUIDv7, generable en el cliente → reintentar un alta no duplica).
 - Tablas en inglés, plural, snake_case ([[ADR-009-Codigo-en-ingles]]).
 - Toda tabla: `created_at`, `created_by`, `updated_at`, `updated_by`.
 - Registros operativos: `status` con `cancelled` para anular (no se borran) ([[ADR-004-Edicion-auditoria-y-bloqueo]]).

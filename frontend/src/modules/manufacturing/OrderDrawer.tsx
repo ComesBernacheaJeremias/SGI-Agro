@@ -16,8 +16,6 @@ import dayjs from 'dayjs';
 import { useEffect } from 'react';
 
 import { useCan } from '@/app/auth/session';
-import { submitOrQueue } from '@/app/offline/submit';
-import { formatDate } from '@/shared/format/date';
 import { notifyStockAlerts } from '@/modules/inventory/api';
 import { useActiveList, warehousesResource } from '@/modules/masterdata/api';
 import { DateInput } from '@/shared/components/DateInput';
@@ -26,6 +24,7 @@ import { EntityDrawer } from '@/shared/crud/EntityDrawer';
 import { HistoryButton } from '@/shared/crud/HistoryButton';
 import { formatMoney, formatNumber } from '@/shared/format/number';
 import { confirmAction, notifyError, notifySuccess } from '@/shared/ui/feedback';
+import { useNewId } from '@/shared/crud/newId';
 
 import { type Order, ordersApi, recipesResource, useInvalidateManufacturing } from './api';
 
@@ -43,6 +42,7 @@ type Props = { order: Order | null; opened: boolean; onClose: () => void };
 
 export function OrderDrawer({ order, opened, onClose }: Props) {
   const can = useCan();
+  const newId = useNewId(opened);
   const invalidate = useInvalidateManufacturing();
   const { data: recipes = [] } = useActiveList(recipesResource);
   const { data: warehouses = [] } = useActiveList(warehousesResource);
@@ -135,20 +135,9 @@ export function OrderDrawer({ order, opened, onClose }: Props) {
       prepare_missing: values.prepare_missing,
       notes: values.notes,
     };
-    let saved;
-    if (order) {
-      saved = await ordersApi.update(order.id, body);
-    } else {
-      const result = await submitOrQueue({
-        kind: 'production_order',
-        path: '/api/v1/production-orders',
-        body,
-        label: `Preparación del ${formatDate(body.date)}`,
-        send: (b) => ordersApi.create(b as typeof body),
-      });
-      if (result.queued) return;
-      saved = result.data;
-    }
+    const saved = order
+      ? await ordersApi.update(order.id, body)
+      : await ordersApi.create({ ...body, id: newId });
     const extra = saved.prepared.length
       ? ` También se prepararon: ${saved.prepared.map((o) => `${o.recipe.name} (${formatNumber(o.quantity, 'quantity')} ${o.unit.code})`).join(', ')}.`
       : '';

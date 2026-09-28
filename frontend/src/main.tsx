@@ -9,7 +9,7 @@ import { registerSW } from 'virtual:pwa-register';
 
 import { App } from '@/app/App';
 
-// Service worker: la app abre sin conexión y se actualiza sola al publicar una versión nueva
+// Service worker: app instalable, abre más rápido y se actualiza sola al publicar una versión nueva
 registerSW({ immediate: true });
 
 const root = document.getElementById('root');

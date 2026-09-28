@@ -1,4 +1,4 @@
-import { Modal, Select, Stack, Text } from '@mantine/core';
+import { Badge, Modal, Select, Stack, Tabs, Text } from '@mantine/core';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
@@ -11,6 +11,8 @@ import { DateInput } from '@/shared/components/DateInput';
 import { formatAuditValue } from '@/shared/format/audit';
 import { formatDate } from '@/shared/format/date';
 import { PageHeader } from '@/shared/ui/PageHeader';
+
+import { describeDevice } from './device';
 
 type Entry = components['schemas']['AuditEntryOut'];
 
@@ -66,8 +68,103 @@ const COLUMNS: Column<Entry>[] = [
   },
 ];
 
-/** Historial general de cambios (dueño y soporte). */
+type LoginEvent = components['schemas']['LoginEventOut'];
+
+const LOGIN_RESULTS = [
+  { value: 'success', label: 'Ingreso correcto' },
+  { value: 'failed', label: 'Usuario o contraseña incorrectos' },
+  { value: 'locked', label: 'Cuenta bloqueada' },
+  { value: 'blocked_ip', label: 'IP bloqueada por intentos' },
+];
+
+const LOGIN_COLUMNS: Column<LoginEvent>[] = [
+  { key: 'created_at', header: 'Fecha', render: (e) => formatDate(e.created_at, 'dateTime') },
+  { key: 'username', header: 'Usuario' },
+  {
+    key: 'result',
+    header: 'Resultado',
+    render: (e) => (
+      <Badge color={e.result === 'success' ? 'green' : 'red'} variant="light">
+        {e.result_label}
+      </Badge>
+    ),
+  },
+  { key: 'ip', header: 'IP', hideOnMobile: true },
+  {
+    key: 'user_agent',
+    header: 'Dispositivo',
+    hideOnMobile: true,
+    render: (e) => (
+      <Text size="xs" c="dimmed" title={e.user_agent ?? undefined}>
+        {describeDevice(e.user_agent)}
+      </Text>
+    ),
+  },
+];
+
+/** Intentos de ingreso al sistema (para ver si alguien anda probando contraseñas). */
+function LoginsTab() {
+  const list = useListState();
+  const [result, setResult] = useState<string | null>(null);
+  const query = {
+    page: list.page,
+    page_size: 50,
+    q: list.params.q,
+    result: (result ?? undefined) as LoginEvent['result'] | undefined,
+  };
+  const { data, isFetching } = useQuery({
+    queryKey: ['audit', 'logins', query],
+    queryFn: async () => unwrap(await api.GET('/api/v1/audit/logins', { params: { query } })),
+    placeholderData: keepPreviousData,
+  });
+  return (
+    <DataTable
+      columns={LOGIN_COLUMNS}
+      list={list}
+      data={data}
+      loading={isFetching}
+      searchPlaceholder="Usuario o IP…"
+      showActiveFilter={false}
+      filters={
+        <Select
+          placeholder="Resultado"
+          data={LOGIN_RESULTS}
+          value={result}
+          onChange={(v) => {
+            setResult(v);
+            list.setPage(1);
+          }}
+          clearable
+          w={240}
+        />
+      }
+    />
+  );
+}
+
+/** Historial: cambios en los datos y accesos al sistema (dueño y soporte). */
 export function AuditPage() {
+  return (
+    <>
+      <PageHeader title="Historial" />
+      <Tabs defaultValue="changes" keepMounted={false}>
+        <Tabs.List mb="md">
+          <Tabs.Tab value="changes">Cambios</Tabs.Tab>
+          <Tabs.Tab value="logins">Accesos</Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel value="changes">
+          <ChangesTab />
+        </Tabs.Panel>
+        <Tabs.Panel value="logins">
+          <LoginsTab />
+        </Tabs.Panel>
+      </Tabs>
+    </>
+  );
+}
+
+/** Cambios en los datos, con filtros. */
+function ChangesTab() {
   const list = useListState();
   const [table, setTable] = useState<string | null>(null);
   const [action, setAction] = useState<string | null>(null);
@@ -99,7 +196,6 @@ export function AuditPage() {
 
   return (
     <>
-      <PageHeader title="Historial de cambios" />
       <DataTable
         columns={COLUMNS}
         list={list}

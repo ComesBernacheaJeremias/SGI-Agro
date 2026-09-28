@@ -84,11 +84,22 @@ class UserService(CrudService[User, UserCreate, UserUpdate]):
         user.locked_until = None
         self.tokens.revoke_all_for_user(user.id, datetime.now(UTC))
 
-    def change_own_password(self, user: User, current: str, new: str) -> None:
+    def revoke_sessions(self, id_: UUID) -> None:
+        """Cierra todas las sesiones del usuario (ej. celular perdido)."""
+        user = self.get(id_)
+        self._ensure_can_manage(user)
+        self.tokens.revoke_all_for_user(user.id, datetime.now(UTC))
+
+    def change_own_password(
+        self, user: User, current: str, new: str, *, keep_session_hash: str | None = None
+    ) -> None:
+        """Cambia la contraseña y cierra las demás sesiones (si alguien tenía una robada,
+        queda afuera); la sesión desde la que se cambia sigue abierta."""
         if not verify_password(user.password_hash, current):
             raise UnauthorizedError("La contraseña actual no es correcta.", code="WRONG_PASSWORD")
         validate_password(new)
         user.password_hash = hash_password(new)
+        self.tokens.revoke_all_for_user(user.id, datetime.now(UTC), keep_hash=keep_session_hash)
 
     # --- Reglas de quién puede modificar a quién ---
 

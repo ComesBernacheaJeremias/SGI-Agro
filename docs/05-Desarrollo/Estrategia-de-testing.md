@@ -10,7 +10,7 @@ actualizado: 2026-09-27
 |---|---|---|
 | **Unitarios** | Reglas de negocio en los services: stock negativo, costo promedio y recálculo, ciclo finalizado bloqueado, hectáreas del lote, imputaciones de pagos, costo de mezclas | pytest |
 | **Integración** | Endpoints contra PostgreSQL real (en Docker): permisos, errores, flujos entre módulos (labor → stock → costo), historial | pytest + TestClient |
-| **Frontend** | Componentes con lógica (formularios, cálculo dosis/ha, cola offline) | Vitest + Testing Library |
+| **Frontend** | Componentes con lógica (formularios, cálculo dosis/ha, formato de números) | Vitest + Testing Library |
 | **Flujos completos (E2E)** | Más adelante (F5/F7) para los flujos críticos: compra → labor → cosecha → venta → cobro | Playwright |
 
 ## Reglas

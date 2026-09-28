@@ -25,12 +25,12 @@ from app.core.pagination import PageParams, paginate
 from app.core.sequences import next_number
 from app.modules.assets.models import (
     Asset,
-    AssetMeter,
     Maintenance,
     MaintenancePart,
     MaintenancePlan,
     MaintenanceStatus,
     MeterReading,
+    meter_unit,
 )
 from app.modules.assets.schemas import MaintenanceIn, PlanOut, PlanStatusOut, Ref
 from app.modules.commercial.expenses import expense_rows
@@ -47,7 +47,7 @@ SOURCE = "assets"
 
 
 def unit_of(asset: Asset) -> str:
-    return "km" if asset.meter == AssetMeter.KM else "h"
+    return meter_unit(asset.meter)
 
 
 def add_months(day: date, months: int) -> date:

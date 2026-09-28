@@ -47,6 +47,15 @@ def _content(file: UploadFile) -> bytes:
     return content
 
 
+# Orden de carga: cada importación usa lo cargado en las anteriores
+LOAD_ORDER = ["products", "parties", "opening_stock", "opening_balances"]
+
+
+def _load_position(definition: ImportDef) -> int:
+    key = definition.key
+    return LOAD_ORDER.index(key) if key in LOAD_ORDER else len(LOAD_ORDER)
+
+
 @router.get("")
 def list_imports(user: CurrentUser) -> list[ImportInfo]:
     permissions = effective_permissions(user.role)
@@ -57,7 +66,7 @@ def list_imports(user: CurrentUser) -> list[ImportInfo]:
             description=d.description,
             columns=[ImportColumnOut(**c.__dict__) for c in d.columns],
         )
-        for d in IMPORTS.values()
+        for d in sorted(IMPORTS.values(), key=_load_position)
         if d.permission.code in permissions
     ]
 

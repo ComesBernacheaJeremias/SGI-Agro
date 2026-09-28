@@ -41,9 +41,13 @@ class SessionTokenRepository(BaseRepository[SessionToken]):
             select(SessionToken).where(SessionToken.token_hash == token_hash)
         )
 
-    def revoke_all_for_user(self, user_id: UUID, now: datetime) -> None:
-        self.session.execute(
-            update(SessionToken)
-            .where(SessionToken.user_id == user_id, SessionToken.revoked_at.is_(None))
-            .values(revoked_at=now)
+    def revoke_all_for_user(
+        self, user_id: UUID, now: datetime, *, keep_hash: str | None = None
+    ) -> None:
+        """Cierra las sesiones abiertas del usuario (menos `keep_hash`, la sesión actual)."""
+        query = update(SessionToken).where(
+            SessionToken.user_id == user_id, SessionToken.revoked_at.is_(None)
         )
+        if keep_hash:
+            query = query.where(SessionToken.token_hash != keep_hash)
+        self.session.execute(query.values(revoked_at=now))

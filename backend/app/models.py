@@ -23,7 +23,7 @@ from app.modules.commercial.models import (
     Payment,
     PaymentLine,
 )
-from app.modules.identity.models import Role, RolePermission, SessionToken, User
+from app.modules.identity.models import LoginEvent, Role, RolePermission, SessionToken, User
 from app.modules.inventory.models import StockDocument, StockDocumentLine, StockMove
 from app.modules.manufacturing.models import (
     ProductionOrder,
@@ -72,6 +72,7 @@ __all__ = [
     "FieldOperationAsset",
     "FieldOperationCycle",
     "FieldOperationInput",
+    "LoginEvent",
     "Maintenance",
     "MaintenancePart",
     "MaintenancePlan",

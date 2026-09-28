@@ -333,6 +333,23 @@ def test_alert_when_stock_reaches_minimum(inv: Inventory) -> None:
 # --- Consultas ---
 
 
+def test_stock_of_one_product_by_warehouse(inv: Inventory) -> None:
+    """Para proponer el almacén al cargar un insumo: stock del producto en cada almacén."""
+    product = inv.product("Sulfato")
+    other = inv.product("Sulfato de cobre")
+    inv.doc("manual_in", [inv.line(product, "4", cost="1")])
+    inv.doc("manual_in", [inv.line(product, "6", cost="1")], warehouse_id=inv.field)
+    inv.doc("manual_in", [inv.line(other, "9", cost="1")])
+
+    params = {"product_id": product, "by_warehouse": True}
+    rows = inv.client.get("/api/v1/stock", params=params).json()["items"]
+
+    assert {(r["warehouse"]["id"], Decimal(r["quantity"])) for r in rows} == {
+        (inv.main, Decimal(4)),
+        (inv.field, Decimal(6)),
+    }
+
+
 def test_stock_at_a_past_date(inv: Inventory) -> None:
     product = inv.product("Abono")
     inv.doc("manual_in", [inv.line(product, "10", cost="1")], when=-10)

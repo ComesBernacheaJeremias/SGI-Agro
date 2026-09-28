@@ -31,6 +31,12 @@ export const usersResource: Resource<User, UserCreate, UserUpdate> = {
     ),
 };
 
+/** Cierra todas las sesiones abiertas del usuario (ej. celular perdido). */
+export async function revokeSessions(id: string): Promise<void> {
+  const result = await api.POST('/api/v1/users/{id_}/revoke-sessions', byId(id));
+  if (result.error !== undefined) unwrap(result);
+}
+
 export async function resetPassword(id: string, password: string): Promise<void> {
   const result = await api.POST('/api/v1/users/{id_}/reset-password', {
     ...byId(id),

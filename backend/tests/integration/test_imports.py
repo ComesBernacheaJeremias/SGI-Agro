@@ -44,6 +44,11 @@ def shop(client: TestClient, db: Session) -> Importer:
 PRODUCT_HEADER = ["Código", "Nombre *", "Tipo *", "Unidad *", "Categoría", "IVA %", "Equivalencias"]
 
 
+def test_imports_are_listed_in_load_order(shop: Importer) -> None:
+    keys = [i["key"] for i in shop.c.get("/api/v1/imports").json()]
+    assert keys == ["products", "parties", "opening_stock", "opening_balances"]
+
+
 def test_template_has_headers_and_instructions(shop: Importer) -> None:
     response = shop.c.get("/api/v1/imports/products/template")
     assert response.status_code == 200

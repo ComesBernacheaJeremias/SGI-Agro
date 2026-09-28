@@ -21,5 +21,5 @@ Al final de cada etapa hay algo funcionando que se le puede mostrar al cliente.
 
 ## Notas
 - Desde F2 cada movimiento guarda sus **dimensiones** (lote, ciclo, labor, activo) → en F5 los costos salen solos ([[ADR-005-Dimensiones-y-costos-calculados]]).
-- IDs generables en el cliente desde F1 para que el offline de F7 no requiera cambios de fondo.
+- IDs generables en el cliente desde F1. La carga sin conexión de F7 se quitó el 28/09 ([[ADR-024-Sin-carga-offline]]).
 - Estimación de tiempos: pendiente.

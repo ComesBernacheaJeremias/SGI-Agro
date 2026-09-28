@@ -57,7 +57,7 @@ Stock actual · Kardex · Documentos (lista + formulario por tipo) · Conteo/aju
 
 ## Implementación
 
-**F7:** los comprobantes manuales se pueden cargar sin conexión ([[Offline-y-sincronizacion]]). Importación del **stock inicial** desde Excel (`inventory/imports.py`): un ingreso con referencia "Stock inicial" por almacén y fecha ([[ADR-021-Importacion-desde-Excel]]).
+**F7:** alta con id generado en el dispositivo (reintentar no duplica; la carga sin conexión se quitó: [[ADR-024-Sin-carga-offline]]). Importación del **stock inicial** desde Excel (`inventory/imports.py`): un ingreso con referencia "Stock inicial" por almacén y fecha ([[ADR-021-Importacion-desde-Excel]]).
 
 ### F2 (2026-09-27) ✅
 Decisión de diseño: [[ADR-016-Motor-de-stock]].
@@ -90,3 +90,5 @@ Decisión de diseño: [[ADR-016-Motor-de-stock]].
 **Tests**: `tests/integration/test_inventory.py` (23: costo promedio, ejemplo del cliente, recálculo al editar, negativos con fecha pasada, anulaciones, transferencias, conversiones, ajustes y permiso, validaciones, alertas, stock a fecha, kardex, historial).
 
 **Pendiente**: congelar movimientos de ciclos finalizados (F3); FK de dimensiones cuando existan establecimientos/lotes/ciclos (F3); impedir cambiar la unidad base de un producto con movimientos (`TODO(F2)` en maestros → hacer junto con F3).
+
+**Ajuste 27/09:** `GET /api/v1/stock` acepta `product_id` (stock de un producto, por almacén con `by_warehouse=true`), usado para proponer el almacén de los insumos de una labor. El listado de productos acepta varios tipos (`type=input&type=finished`).

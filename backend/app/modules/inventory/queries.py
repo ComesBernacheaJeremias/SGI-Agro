@@ -40,6 +40,7 @@ class StockFilters:
     by_warehouse: bool = False
     below_min: bool = False
     include_zero: bool = False
+    product_id: UUID | None = None
 
 
 def _normalized(column: Any) -> Any:
@@ -174,6 +175,8 @@ class StockQueries:
             )
         if f.category_id:
             query = query.where(Product.category_id == f.category_id)
+        if f.product_id:
+            query = query.where(Product.id == f.product_id)
         if f.below_min:
             query = query.where(below_min)
         elif not f.include_zero:

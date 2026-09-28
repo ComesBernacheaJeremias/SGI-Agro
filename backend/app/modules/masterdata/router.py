@@ -60,7 +60,7 @@ VAT_RATES = [
 
 
 def _product_filters(
-    type: Annotated[ProductType | None, Query()] = None,
+    type: Annotated[list[ProductType] | None, Query()] = None,
     category_id: Annotated[UUID | None, Query()] = None,
 ) -> dict[str, Any]:
     return {"type": type, "category_id": category_id}

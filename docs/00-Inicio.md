@@ -10,14 +10,14 @@ actualizado: 2026-09-27
 
 ## Estado actual
 - **Etapa:** **F7 terminada** (27/09/2026): el sistema está listo para publicarse. Falta el **deploy real** (necesita las cuentas del usuario) y que el usuario pruebe F4–F7.
-- **Hecho:** F0 (entorno, login), F1 (usuarios, roles, historial, maestros), F2 (inventario con costo promedio y alertas de mínimo), F3 (producción: ciclos, labores, cosecha, cuaderno de campo; elaboración multinivel; activos básicos), F4 (compras, ventas, cobros/pagos, cuentas corrientes, caja y bancos), F5 (costos, rentabilidad, resultado de gestión, reportes con Excel/PDF, tablero), F6 (activos: lecturas, planes y avisos, mantenimientos con repuestos, ficha con costo real), F7 (importar desde Excel, carga sin conexión, producción, manual y datos de ejemplo). Tests: backend 175, frontend 15.
+- **Hecho:** F0 (entorno, login), F1 (usuarios, roles, historial, maestros), F2 (inventario con costo promedio y alertas de mínimo), F3 (producción: ciclos, labores, cosecha, cuaderno de campo; elaboración multinivel; activos básicos), F4 (compras, ventas, cobros/pagos, cuentas corrientes, caja y bancos), F5 (costos, rentabilidad, resultado de gestión, reportes con Excel/PDF, tablero), F6 (activos: lecturas, planes y avisos, mantenimientos con repuestos, ficha con costo real), F7 (importar desde Excel, producción, manual y datos de ejemplo). Tests: backend 192, frontend 20. **Sin carga sin conexión** desde el 28/09 ([[ADR-024-Sin-carga-offline]]). Revisión de seguridad hecha ([[ADR-023-Endurecimiento-de-seguridad]]) y prueba completa en Chrome con ajustes (27/09).
 - **Pendiente con el cliente:** [[Preguntas-abiertas]] (no bloquean F0).
 
 ## Próximos pasos
-1. (Pospuesto) `git init` + subir a GitHub + `pre-commit install`; el usuario ejecuta los comandos de git.
-2. El usuario prueba F4, F5 y F6 en el navegador (y lo pendiente de F1–F3); corregir lo que surja.
-3. **Deploy real** ([[Entorno-local-y-deploy]]): cuando estén cuenta de DigitalOcean, dominio, GitHub (repositorio privado) y, opcional, Sentry.
-4. **Arranque con el cliente** ([[Puesta-en-marcha]]): demo con `seed-demo`, entrega del el manual en `/manual` ([[Manual-de-uso]]), carga inicial por Excel. Decisiones de F7 (27/09): orden Excel → sin conexión → servidor → manual; se importan productos, terceros, stock inicial y saldos; PostgreSQL en el mismo droplet (2 GB) con backups a Spaces. Pendiente del usuario/cliente: cuenta DigitalOcean, dominio, GitHub, Sentry.
+1. **Git:** el usuario sube los cambios de seguridad, los ajustes de la prueba en Chrome y la baja de la carga sin conexión (ver bitácora 28/09). El código está en GitHub: [SGI-Agro](https://github.com/ComesBernacheaJeremias/SGI-Agro) (rama `main`; el usuario ejecuta los comandos de git). Opcional: `pre-commit install`.
+2. **Probar en Chrome** (con permiso del usuario) los ajustes del 27/09 y que las altas guarden normal sin la cola; el usuario sigue probando F1–F7.
+3. **Deploy real** ([[Entorno-local-y-deploy]]): cuando estén cuenta de DigitalOcean, dominio y, opcional, Sentry (GitHub ya está).
+4. **Arranque con el cliente** ([[Puesta-en-marcha]]): demo con `seed-demo`, el manual en `/manual` ([[Manual-de-uso]]), carga inicial por Excel. Decisiones de F7 (27/09): orden Excel → sin conexión → servidor → manual; se importan productos, terceros, stock inicial y saldos; PostgreSQL en el mismo droplet (2 GB) con backups a Spaces. Pendiente del usuario/cliente: cuenta DigitalOcean, dominio, Sentry.
 
 ## Mapa del proyecto
 
@@ -40,7 +40,7 @@ actualizado: 2026-09-27
 - [[Modelo-de-datos]]
 - [[Estructura-del-repositorio]]
 - [[API]]
-- [[Offline-y-sincronizacion]]
+- [[Offline-y-sincronizacion]] (no hay carga sin conexión)
 - [[Seguridad]]
 - [[Observabilidad]]
 
@@ -91,6 +91,8 @@ Estados: 📝 Definido · 🔨 En desarrollo · ✅ Implementado · 🚀 En prod
 - [[ADR-020-Medidor-y-planes-de-mantenimiento]]
 - [[ADR-021-Importacion-desde-Excel]]
 - [[ADR-022-Infraestructura-de-produccion]]
+- [[ADR-023-Endurecimiento-de-seguridad]]
+- [[ADR-024-Sin-carga-offline]]
 
 ### 8. Manual de uso (para el cliente)
 - [[Manual-de-uso]] — página `/manual` del sistema (pública, preguntas "¿Cómo hago…?" con pasos cortos)

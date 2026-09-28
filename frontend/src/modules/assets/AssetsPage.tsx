@@ -16,7 +16,7 @@ import { PageHeader } from '@/shared/ui/PageHeader';
 import {
   type Asset,
   assetsResource,
-  meterUnit,
+  meterRate,
   PLAN_STATE,
   useAssetOptions,
   useMaintenanceAlerts,
@@ -99,6 +99,11 @@ function AssetDrawer({ record, opened, onClose }: DrawerProps<Asset>) {
           data={options?.kinds ?? []}
           disabled={!canWrite}
           {...form.getInputProps('kind')}
+          onChange={(kind) => {
+            form.setFieldValue('kind', (kind ?? 'machinery') as Asset['kind']);
+            // Un activo nuevo: los vehículos se miden en km; máquinas y herramientas en horas
+            if (!record) form.setFieldValue('meter', kind === 'vehicle' ? 'km' : 'hours');
+          }}
         />
         <Select
           label="Estado"
@@ -126,7 +131,7 @@ function AssetDrawer({ record, opened, onClose }: DrawerProps<Asset>) {
           {...form.getInputProps('meter')}
         />
         <NumberInput
-          label={`Tarifa por ${meterUnit(form.values.meter) === 'km' ? 'km' : 'hora'}`}
+          label={`Tarifa ${meterRate(form.values.meter)}`}
           description="Se imputa a las labores"
           kind="price"
           leftSection="$"
@@ -181,7 +186,7 @@ export function AssetsPage() {
       key: 'rate',
       header: 'Tarifa',
       align: 'right',
-      render: (a) => `${formatMoney(a.rate)} / ${meterUnit(a.meter)}`,
+      render: (a) => `${formatMoney(a.rate)} ${meterRate(a.meter)}`,
     },
     {
       key: 'status',

@@ -7,6 +7,8 @@ from zoneinfo import ZoneInfo
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy import URL
 
+WEAK_PASSWORDS = {"sgi_dev_password", "postgres", "password", "123456"}
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(extra="ignore")
@@ -24,6 +26,11 @@ class Settings(BaseSettings):
     refresh_token_days: int = 30
     login_max_attempts: int = 5
     login_lock_minutes: int = 15
+    # Tope por IP (además del bloqueo por usuario): intentos fallidos en la ventana
+    login_ip_max_attempts: int = 20
+    login_ip_window_minutes: int = 10
+    # Tope general de pedidos por IP y por minuto (solo en producción)
+    api_rate_limit_per_minute: int = 600
 
     timezone: str = "America/Argentina/Buenos_Aires"
 
@@ -48,6 +55,18 @@ class Settings(BaseSettings):
     @property
     def is_production(self) -> bool:
         return self.environment == "production"
+
+    def check_production(self) -> None:
+        """En producción no se arranca con claves débiles o de ejemplo."""
+        if not self.is_production:
+            return
+        problems = []
+        if len(self.jwt_secret) < 32 or "cambiar" in self.jwt_secret:
+            problems.append("JWT_SECRET tiene que ser aleatorio y de 32 caracteres o más")
+        if len(self.postgres_password) < 12 or self.postgres_password in WEAK_PASSWORDS:
+            problems.append("POSTGRES_PASSWORD tiene que ser aleatoria y de 12 caracteres o más")
+        if problems:
+            raise RuntimeError("Configuración insegura para producción: " + "; ".join(problems))
 
 
 @lru_cache

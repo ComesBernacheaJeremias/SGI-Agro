@@ -15,6 +15,7 @@ from uuid import UUID
 from sqlalchemy import Subquery, func, select
 from sqlalchemy.orm import Session
 
+from app.modules.assets.models import meter_unit
 from app.modules.commercial.expenses import expense_rows
 from app.modules.inventory.models import StockMove
 from app.modules.production.models import (
@@ -304,7 +305,7 @@ class ProductionQueries:
                 FieldBookAsset(
                     asset=a.asset.name,
                     usage=_share(a.usage, area, total).quantize(MONEY),
-                    unit="h" if a.asset.meter == "hours" else "km",
+                    unit=meter_unit(a.asset.meter),
                     cost=_share(a.cost, area, total).quantize(MONEY),
                 )
                 for a in op.assets

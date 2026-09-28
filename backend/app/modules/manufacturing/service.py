@@ -225,7 +225,7 @@ class ProductionOrderService:
         self, data: OrderIn, parent_id: UUID | None = None
     ) -> tuple[ProductionOrder, list[ProductionOrder], list[StockAlertOut]]:
         if data.id and (existing := self.session.get(ProductionOrder, data.id)):
-            return existing, [], []  # reenvío desde la carga sin conexión
+            return existing, [], []  # reintento del mismo guardado
         recipe = self._recipe(data.recipe_id)
         self._validate(data)
         lines = data.lines or self._scaled_lines(recipe, data.quantity)

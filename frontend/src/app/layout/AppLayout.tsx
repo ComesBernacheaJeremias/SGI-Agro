@@ -1,17 +1,20 @@
 import { AppShell, Burger, Group, Menu, NavLink, Text, UnstyledButton } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { useQueryClient } from '@tanstack/react-query';
 import { IconChevronDown, IconHelp, IconLogout, IconUser } from '@tabler/icons-react';
 import { NavLink as RouterNavLink, Outlet, useNavigate } from 'react-router-dom';
 
 import { logout } from '@/app/auth/auth';
 import { useCan, useSession } from '@/app/auth/session';
 import { NAV_ITEMS } from '@/app/navigation';
-import { OfflineStatus } from '@/app/offline/OfflineStatus';
 import { MaintenanceBell } from '@/modules/assets/MaintenanceBell';
 import { StockAlertsBell } from '@/modules/inventory/StockAlertsBell';
 
+import { OfflineBadge } from './OfflineBadge';
+
 /** Estructura de todas las pantallas internas: barra superior + menú lateral + contenido. */
 export function AppLayout() {
+  const queryClient = useQueryClient();
   const [menuOpen, { toggle, close }] = useDisclosure();
   const session = useSession();
   const can = useCan();
@@ -20,6 +23,7 @@ export function AppLayout() {
 
   async function handleLogout() {
     await logout();
+    queryClient.clear(); // que no quede nada del usuario anterior en memoria
     navigate('/login', { replace: true });
   }
 
@@ -44,7 +48,7 @@ export function AppLayout() {
             </Text>
           </Group>
           <Group gap="xs">
-            <OfflineStatus />
+            <OfflineBadge />
             <MaintenanceBell />
             <StockAlertsBell />
             <Menu position="bottom-end">

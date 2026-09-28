@@ -1,0 +1,84 @@
+# Revisión automática en cada push y pull request: calidad, tests, dependencias y secretos.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "0 9 * * 1" # los lunes: vulnerabilidades nuevas en dependencias que no cambiaron
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: sgi
+          POSTGRES_PASSWORD: sgi_ci_password
+          POSTGRES_DB: sgi_agro_test # los tests usan <POSTGRES_DB>_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U sgi" --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      POSTGRES_USER: sgi
+      POSTGRES_PASSWORD: sgi_ci_password
+      POSTGRES_DB: sgi_agro
+      DB_HOST: localhost
+      DB_PORT: "5432"
+      JWT_SECRET: ci-secret-only-for-tests-0123456789abcdef
+      UV_PROJECT_ENVIRONMENT: .venv
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen
+      - name: Formato y lint
+        run: uv run ruff format --check app tests && uv run ruff check app tests
+      - name: Tipos
+        run: uv run mypy app tests
+      - name: Tests
+        run: uv run pytest -q
+      - name: Dependencias con vulnerabilidades conocidas
+        run: |
+          uv export --frozen --no-hashes --no-dev -o requirements-audit.txt
+          uvx pip-audit -r requirements-audit.txt
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --no-fund
+      - name: Formato, lint y tipos
+        run: npm run format:check && npm run lint && npm run typecheck
+      - name: Tests
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: Dependencias con vulnerabilidades conocidas
+        run: npm audit --omit=dev --audit-level=high
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Secretos subidos por error (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

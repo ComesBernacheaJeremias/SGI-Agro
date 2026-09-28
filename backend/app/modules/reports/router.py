@@ -22,6 +22,14 @@ MEDIA = {
 }
 
 
+# Orden de los grupos en el catálogo: primero la rentabilidad (lo que más mira el dueño)
+GROUP_ORDER = ["Costos y rentabilidad", "Comercial y caja", "Inventario", "Activos"]
+
+
+def _group_position(report: ReportDef) -> int:
+    return GROUP_ORDER.index(report.group) if report.group in GROUP_ORDER else len(GROUP_ORDER)
+
+
 class ReportInfo(Schema):
     key: str
     title: str
@@ -44,7 +52,7 @@ def list_reports(user: CurrentUser) -> list[ReportInfo]:
         ReportInfo(
             key=r.key, title=r.title, group=r.group, description=r.description, filters=r.filters
         )
-        for r in REPORTS.values()
+        for r in sorted(REPORTS.values(), key=_group_position)
         if r.permission.code in permissions
     ]
 

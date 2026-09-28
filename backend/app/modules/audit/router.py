@@ -1,16 +1,18 @@
-from datetime import date
+from datetime import date, datetime
 from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Query
+from sqlalchemy import func, select
 
 from app.core.db import DbSession
-from app.core.pagination import Page, Pagination
+from app.core.pagination import Page, Pagination, paginate
+from app.core.schemas import Schema
 from app.modules.audit.schemas import AuditEntryOut
 from app.modules.audit.service import AuditFilters, AuditService
 from app.modules.identity.authorization import require
 from app.modules.identity.dependencies import CurrentUser
-from app.modules.identity.models import User
+from app.modules.identity.models import LOGIN_RESULT_LABELS, LoginEvent, LoginResult, User
 from app.modules.identity.permissions import AUDIT_READ
 
 router = APIRouter(prefix="/api/v1/audit", tags=["audit"])
@@ -42,3 +44,55 @@ def general_history(
     )
     items, total = AuditService(db).search(filters, page)
     return Page(items=items, total=total, page=page.page, page_size=page.page_size)
+
+
+class LoginEventOut(Schema):
+    id: UUID
+    created_at: datetime
+    username: str
+    ip: str
+    user_agent: str
+    result: LoginResult
+    result_label: str
+
+
+@router.get("/logins")
+def login_events(
+    db: DbSession,
+    _: Annotated[User, require(AUDIT_READ)],
+    page: Pagination,
+    q: str | None = None,
+    result: LoginResult | None = None,
+    date_from: Annotated[date | None, Query()] = None,
+    date_to: Annotated[date | None, Query()] = None,
+) -> Page[LoginEventOut]:
+    """Intentos de ingreso (correctos y fallidos), los más nuevos primero."""
+    query = select(LoginEvent).order_by(LoginEvent.created_at.desc())
+    if q:
+        query = query.where(
+            LoginEvent.username.ilike(f"%{q.strip()}%") | LoginEvent.ip.ilike(f"%{q.strip()}%")
+        )
+    if result:
+        query = query.where(LoginEvent.result == result)
+    if date_from:
+        query = query.where(func.date(LoginEvent.created_at) >= date_from)
+    if date_to:
+        query = query.where(func.date(LoginEvent.created_at) <= date_to)
+    items, total = paginate(db, query, page)
+    return Page(
+        items=[
+            LoginEventOut(
+                id=e.id,
+                created_at=e.created_at,
+                username=e.username,
+                ip=e.ip,
+                user_agent=e.user_agent,
+                result=e.result,
+                result_label=LOGIN_RESULT_LABELS[e.result],
+            )
+            for e in items
+        ],
+        total=total,
+        page=page.page,
+        page_size=page.page_size,
+    )

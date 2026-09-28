@@ -28,6 +28,25 @@ describe('NumberInput', () => {
     expect(screen.getByTestId('api-value')).toHaveTextContent('1234567.891');
   });
 
+  it('el punto también escribe la coma decimal', async () => {
+    render(<Harness kind="price" />);
+    const input = screen.getByLabelText('Monto');
+
+    await userEvent.type(input, '1234.5');
+
+    expect(input).toHaveValue('1.234,5');
+    expect(screen.getByTestId('api-value')).toHaveTextContent('1234.5');
+  });
+
+  it('precio: no agrega ",00" solo', async () => {
+    render(<Harness kind="price" />);
+    const input = screen.getByLabelText('Monto');
+
+    await userEvent.type(input, '1500');
+
+    expect(input).toHaveValue('1.500');
+  });
+
   it('precio: no permite más de 2 decimales', async () => {
     render(<Harness kind="price" />);
     const input = screen.getByLabelText('Monto');

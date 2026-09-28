@@ -18,5 +18,9 @@ RUN uv sync --frozen --no-install-project
 
 COPY . .
 
+# Sin root: si alguien lograra ejecutar algo en la API, no tendría permisos sobre el sistema
+RUN useradd --create-home --uid 1000 app
+USER app
+
 EXPOSE 8000
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

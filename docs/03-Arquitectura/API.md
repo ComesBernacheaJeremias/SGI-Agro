@@ -23,7 +23,7 @@ FastAPI genera la especificación **OpenAPI** sola:
 | Orden | `?sort=-date` |
 | Fechas | ISO 8601 |
 | Decimales | Como **string** en JSON (`"1234.56"`) para no perder precisión |
-| IDs | UUID; al crear, el cliente **puede** enviar el `id` (idempotencia para offline) |
+| IDs | UUID; al crear, el cliente **puede** enviar el `id` (si se reintenta el guardado no duplica, [[ADR-024-Sin-carga-offline]]) |
 | Errores | `{ "error": { "code": "INSUFFICIENT_STOCK", "message": "No alcanza el stock de Glifosato en Depósito Central (hay 3 L)", "details": {} } }` |
 | Status | 200/201 ok · 401 no autenticado · 403 sin permiso · 404 · 409 regla de negocio (ciclo cerrado, stock insuficiente) · 422 datos inválidos |
 

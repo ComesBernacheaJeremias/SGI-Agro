@@ -1,4 +1,4 @@
-"""Carga sin conexión: el dispositivo genera el id y el reenvío no duplica (ADR-006)."""
+"""Altas con id generado en el dispositivo: reintentar el guardado no duplica (ADR-024)."""
 
 from decimal import Decimal
 from uuid import uuid4

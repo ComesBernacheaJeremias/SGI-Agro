@@ -10,7 +10,13 @@ import { formatMoney } from '@/shared/format/number';
 import type { Direction, ExpenseCategory } from './api';
 import { BatchSelect } from './BatchSelect';
 import { DestinationField } from './DestinationField';
-import { type DocLineValue, emptyDocLine, lineAmounts, VAT_RATES } from './documentLines';
+import {
+  type DocLineValue,
+  emptyDocLine,
+  lineAmounts,
+  rateText,
+  vatOptions,
+} from './documentLines';
 
 type Props = {
   direction: Direction;
@@ -68,6 +74,8 @@ export function DocumentLinesField({
                         product,
                         unit_id: product?.unit.id ?? null,
                         batch_id: null,
+                        // La alícuota del producto (se puede cambiar en la línea)
+                        vat_rate: product ? rateText(product.vat_rate) : line.vat_rate,
                       })
                     }
                     disabled={readOnly}
@@ -123,7 +131,7 @@ export function DocumentLinesField({
               />
               <Select
                 label="IVA"
-                data={VAT_RATES}
+                data={vatOptions(line.vat_rate)}
                 value={line.vat_rate}
                 onChange={(v) => update(line.key, { vat_rate: v ?? '21' })}
                 allowDeselect={false}

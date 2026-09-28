@@ -23,7 +23,7 @@ Lista para el día en que el cliente empieza a usar el sistema. Servidor: [[Ento
    - [ ] *Reportes → Stock valorizado*: cantidades y valor total.
    - [ ] *Reportes → Saldos de cuentas corrientes*: clientes y proveedores, uno por uno los más grandes.
    - [ ] *Caja y bancos*: saldo de cada cuenta.
-6. **Instalar la app** en el celular del dueño y del secretario y hacer una carga de prueba sin señal (modo avión) → ver que se sincroniza.
+6. **Instalar la app** en el celular del dueño y del secretario y hacer una carga de prueba con datos móviles (para cuando se corte internet en la oficina).
 
 ## Primeras semanas
 - Semana 1: revisar juntos las labores y compras cargadas; corregir hábitos (destinos de gastos, partidas en ventas).

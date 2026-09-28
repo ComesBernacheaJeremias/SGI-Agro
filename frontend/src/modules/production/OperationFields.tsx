@@ -9,15 +9,53 @@ import {
   Text,
 } from '@mantine/core';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { useQueryClient } from '@tanstack/react-query';
 
-import { type Asset, meterUnit } from '@/modules/assets/api';
-import type { Unit, Warehouse } from '@/modules/masterdata/api';
+import { type Asset, meterRate, meterUnit } from '@/modules/assets/api';
+import { suggestWarehouse, useProductStock } from '@/modules/inventory/api';
+import type { Product, Unit, Warehouse } from '@/modules/masterdata/api';
 import { ProductSelect } from '@/modules/masterdata/ProductSelect';
 import { allowedUnits } from '@/modules/masterdata/units';
 import { NumberInput } from '@/shared/components/NumberInput';
 import { formatMoney, formatNumber } from '@/shared/format/number';
 
 import { type AssetValue, emptyAsset, emptyInput, type InputValue } from './operationForm';
+
+/** Productos que se aplican en una labor (la cosecha y la reventa no). */
+const INPUT_TYPES: Product['type'][] = ['input', 'semi_finished', 'finished'];
+
+type WarehouseProps = {
+  productId: string | null;
+  warehouses: Warehouse[];
+  value: string | null;
+  onChange: (warehouseId: string | null) => void;
+  disabled: boolean;
+};
+
+/** Almacén de origen de un insumo, con el stock del producto en cada uno. */
+function InputWarehouseSelect({
+  productId,
+  warehouses,
+  value,
+  onChange,
+  disabled,
+}: WarehouseProps) {
+  const { data: stock } = useProductStock(productId);
+  const label = (w: Warehouse) => {
+    const row = stock?.find((r) => r.warehouse?.id === w.id);
+    return row ? `${w.name} · ${formatNumber(row.quantity, 'quantity')} ${row.unit}` : w.name;
+  };
+  return (
+    <Select
+      label="Almacén"
+      data={warehouses.map((w) => ({ value: w.id, label: label(w) }))}
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+      w={200}
+    />
+  );
+}
 
 type InputsProps = {
   value: InputValue[];
@@ -37,8 +75,20 @@ export function InputsField({
   totalArea,
   readOnly,
 }: InputsProps) {
+  const queryClient = useQueryClient();
   const update = (key: string, patch: Partial<InputValue>) =>
     onChange(value.map((row) => (row.key === key ? { ...row, ...patch } : row)));
+
+  /** Al elegir el producto se propone el almacén que tiene stock (si el elegido no tiene). */
+  async function selectProduct(row: InputValue, product: Product | null) {
+    const suggested =
+      product && (await suggestWarehouse(queryClient, product.id, row.warehouse_id));
+    update(row.key, {
+      product,
+      unit_id: product?.unit.id ?? null,
+      warehouse_id: suggested ?? row.warehouse_id,
+    });
+  }
   const lastWarehouse = value.at(-1)?.warehouse_id ?? warehouses[0]?.id ?? null;
 
   return (
@@ -54,11 +104,9 @@ export function InputsField({
             <Group gap="xs" align="flex-end" wrap="wrap">
               <ProductSelect
                 label="Producto"
-                stockOnly
+                types={INPUT_TYPES}
                 value={row.product}
-                onChange={(product) =>
-                  update(row.key, { product, unit_id: product?.unit.id ?? null })
-                }
+                onChange={(product) => void selectProduct(row, product)}
                 disabled={readOnly}
                 style={{ flex: '1 1 200px' }}
               />
@@ -92,13 +140,12 @@ export function InputsField({
                 disabled={readOnly}
                 w={120}
               />
-              <Select
-                label="Almacén"
-                data={warehouses.map((w) => ({ value: w.id, label: w.name }))}
+              <InputWarehouseSelect
+                productId={row.product?.id ?? null}
+                warehouses={warehouses}
                 value={row.warehouse_id}
                 onChange={(warehouse_id) => update(row.key, { warehouse_id })}
                 disabled={readOnly}
-                w={160}
               />
               {!readOnly && (
                 <ActionIcon
@@ -179,8 +226,8 @@ export function AssetsField({ value, onChange, assets, readOnly }: AssetsProps) 
             />
             {asset && row.usage && (
               <Text size="xs" c="dimmed" mb={8}>
-                {formatMoney(Number(row.usage) * Number(asset.rate))} ({formatMoney(asset.rate)}/
-                {unit})
+                {formatMoney(Number(row.usage) * Number(asset.rate))} ({formatMoney(asset.rate)}{' '}
+                {meterRate(asset.meter)})
               </Text>
             )}
             {!readOnly && (

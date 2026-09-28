@@ -169,6 +169,16 @@ def test_dashboard(season: Season) -> None:
     assert money(board["cash"]["total"]) == 95000
 
 
+def test_catalog_starts_with_profitability(season: Season) -> None:
+    groups = [r["group"] for r in season.c.get("/api/v1/reports").json()]
+    assert list(dict.fromkeys(groups)) == [
+        "Costos y rentabilidad",
+        "Comercial y caja",
+        "Inventario",
+        "Activos",
+    ]
+
+
 def test_staff_does_not_see_costs(client: TestClient, db: Session) -> None:
     login_as(client, db, STAFF)
     keys = {r["key"] for r in client.get("/api/v1/reports").json()}

@@ -32,8 +32,8 @@ $COMPOSE exec -T backup backup.sh now antes-de-restaurar
 echo "→ Restaurando"
 $COMPOSE exec -T backup sh -c "
 	psql -d postgres -c \"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '\$PGDATABASE' AND pid <> pg_backend_pid();\" >/dev/null
-	dropdb \"\$PGDATABASE\" && createdb \"\$PGDATABASE\" &&
-	pg_restore --no-owner --dbname=\"\$PGDATABASE\" /backups/$FILE"
+	dropdb \"\$PGDATABASE\" && createdb --owner=\"\$APP_DB_USER\" \"\$PGDATABASE\" &&
+	pg_restore --no-owner --role=\"\$APP_DB_USER\" --dbname=\"\$PGDATABASE\" /backups/$FILE"
 
 echo "→ Levantando la API"
 $COMPOSE start api

@@ -29,6 +29,7 @@ import { confirmAction, notifyError, notifySuccess } from '@/shared/ui/feedback'
 import {
   type Asset,
   type Maintenance,
+  meterRate,
   PLAN_STATE,
   type PlanStatus,
   plansResource,
@@ -143,18 +144,23 @@ function PlanModal({
           />
           <SimpleGrid cols={2}>
             <NumberInput
-              label={`Cada (${unit})`}
+              label={unit === 'km' ? 'Cada cuántos km' : 'Cada cuántas horas de uso'}
+              placeholder={unit === 'km' ? '10.000' : '250'}
               kind="quantity"
               {...form.getInputProps('every_usage')}
             />
             <NumberInput
-              label="Cada (meses)"
+              label="O cada cuántos meses"
+              description="Opcional"
               kind="quantity"
               {...form.getInputProps('every_months')}
             />
           </SimpleGrid>
           <Text size="xs" c="dimmed">
-            Lo que llegue primero. Avisa cuando falta el 10 % o 15 días.
+            {unit === 'km'
+              ? 'En rodados lo habitual es por km. '
+              : 'Las horas son las que marca el horómetro del tractor. '}
+            Si completás los dos, avisa con lo que llegue primero (cuando falta el 10 % o 15 días).
           </Text>
           <SimpleGrid cols={2}>
             <DateInput
@@ -299,7 +305,7 @@ export function AssetSheet({ asset, onClose, onEdit }: Props) {
     }
   }
 
-  const unit = sheet?.unit ?? 'h';
+  const unit = sheet?.unit ?? 'horas';
   const costs = sheet?.costs;
   const diff =
     costs?.real_rate && Number(costs.rate)
@@ -365,7 +371,7 @@ export function AssetSheet({ asset, onClose, onEdit }: Props) {
                 hint={`Cargado a ciclos: ${formatMoney(costs.rate_cost)}`}
               />
               <Figure
-                label={`Costo real por ${unit}`}
+                label={`Costo real ${meterRate(unit)}`}
                 value={costs.real_rate ? formatMoney(costs.real_rate) : '—'}
                 hint={`Tarifa: ${formatMoney(costs.rate)}${diff !== null ? ` (${diff > 0 ? '+' : ''}${formatNumber(diff, 'quantity')} %)` : ''}`}
                 color={diff !== null && Math.abs(diff) > 20 ? 'orange' : undefined}

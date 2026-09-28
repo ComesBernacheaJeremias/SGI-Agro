@@ -33,7 +33,7 @@ Insecticida tomate (terminado) — rinde 1 L
 - Vista en árbol de la receta completa (con sus semielaborados desplegados) y costo estimado actual.
 - Cambiar una receta no altera las preparaciones hechas (cada preparación guarda lo realmente usado).
 
-**HU-05-02 · Registrar una preparación** — apta offline
+**HU-05-02 · Registrar una preparación**
 - Fecha, receta, cantidad a producir (escala la receta), almacén de componentes, almacén destino.
 - Se pueden ajustar las cantidades reales de los componentes.
 - Al guardar: salida de cada componente a su **costo promedio** y entrada del producto con **costo = suma de lo consumido** ÷ cantidad producida.
@@ -63,7 +63,7 @@ Stock: 10 L de Veneno A; la receta usa 1 L por litro.
 
 ## Implementación
 
-**F7:** alta apta para la carga sin conexión (id generado en el dispositivo, cola y reenvío sin duplicar) → [[Offline-y-sincronizacion]].
+**F7:** alta con id generado en el dispositivo (reintentar no duplica). La carga sin conexión se quitó: [[ADR-024-Sin-carga-offline]].
 
 ### F3 (2026-09-27) ✅
 Decisiones: [[ADR-014-Recetas-multinivel]], [[ADR-017-Costo-derivado-y-cascada]].

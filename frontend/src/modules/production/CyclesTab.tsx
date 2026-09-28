@@ -51,7 +51,7 @@ export function CyclesTab({ onOpen }: Props) {
         />
       </Group>
       {data?.items.length === 0 && <Text c="dimmed">No hay ciclos para mostrar.</Text>}
-      <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
+      <SimpleGrid cols={{ base: 1, md: 2, lg: 3 }}>
         {data?.items.map((c) => (
           <Paper
             key={c.id}
@@ -96,7 +96,9 @@ export function CyclesTab({ onOpen }: Props) {
                   Rinde
                 </Text>
                 <Text size="sm" fw={600}>
-                  {c.yield_per_ha ? `${formatNumber(c.yield_per_ha, 'quantity')}/ha` : '—'}
+                  {c.yield_per_ha
+                    ? `${formatNumber(c.yield_per_ha, 'quantity')} ${c.harvest_unit}/ha`
+                    : '—'}
                 </Text>
               </Stack>
             </SimpleGrid>

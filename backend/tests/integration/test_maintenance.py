@@ -62,7 +62,7 @@ def test_current_reading_adds_usage_after_last_reading(shop: Workshop) -> None:
     sheet = shop.c.get(f"/api/v1/asset-sheets/{shop.tractor}").json()
     assert Decimal(sheet["current_reading"]) == Decimal(1002)
     assert sheet["last_reading_date"] == day(-20)
-    assert sheet["unit"] == "h"
+    assert sheet["unit"] == "horas"
 
 
 def test_plan_states(shop: Workshop) -> None:

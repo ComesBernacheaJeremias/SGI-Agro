@@ -56,3 +56,5 @@ Información para decidir. Todo reporte se filtra, se ve en pantalla y se export
 - Frontend `modules/reports/`: `ReportView` (filtros + tabla + Excel/PDF, una sola implementación), pantalla **Reportes** (catálogo agrupado), `LinkedRecord` (tocar una fila abre el ciclo, comprobante, cobro/pago o movimiento).
 
 F6: reporte **Costo por activo** y tarjeta **Mantenimientos** (próximos y vencidos) en el tablero.
+
+**Ajuste 27/09:** el catálogo muestra los grupos en orden fijo: Costos y rentabilidad, Comercial y caja, Inventario, Activos (`GROUP_ORDER` en `reports/router.py`). Importar datos lista las importaciones en el orden de carga: productos → clientes y proveedores → stock inicial → saldos (`LOAD_ORDER`).

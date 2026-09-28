@@ -1,0 +1,29 @@
+# Dependabot: avisa (con un pull request) cuando sale una versión con un arreglo de seguridad
+# o una actualización. Se revisan una vez por semana y se agrupan para no llenar de PRs.
+version: 2
+updates:
+  - package-ecosystem: uv
+    directory: /backend
+    schedule:
+      interval: weekly
+    groups:
+      backend:
+        patterns: ["*"]
+
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+    groups:
+      frontend:
+        patterns: ["*"]
+
+  - package-ecosystem: docker
+    directories: ["/backend", "/frontend", "/deploy", "/deploy/backup"]
+    schedule:
+      interval: monthly
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

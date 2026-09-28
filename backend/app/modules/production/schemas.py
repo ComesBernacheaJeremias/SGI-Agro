@@ -110,7 +110,7 @@ class HarvestIn(Schema):
 
 
 class OperationIn(Schema):
-    # Carga sin conexión: el dispositivo genera el id; reenviar no duplica (ADR-006)
+    # El dispositivo genera el id: reintentar el guardado no duplica (ADR-024)
     id: UUID | None = None
     date: date
     operation_type_id: UUID

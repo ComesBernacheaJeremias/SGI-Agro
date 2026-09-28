@@ -10,6 +10,7 @@ from app.core import health
 from app.core.config import get_settings
 from app.core.errors import register_error_handlers
 from app.core.logging import configure_logging, request_logging_middleware
+from app.core.ratelimit import rate_limit_middleware
 from app.modules.assets import router as assets
 from app.modules.audit import router as audit
 from app.modules.commercial import router as commercial
@@ -26,6 +27,7 @@ from app.modules.reports import router as reports_router
 
 def create_app() -> FastAPI:
     settings = get_settings()
+    settings.check_production()
     configure_logging(json=settings.is_production)
     if settings.sentry_dsn:
         sentry_sdk.init(
@@ -46,6 +48,8 @@ def create_app() -> FastAPI:
         openapi_url="/api/openapi.json" if docs else None,
     )
     app.middleware("http")(request_logging_middleware)
+    if settings.is_production:
+        app.middleware("http")(rate_limit_middleware(settings.api_rate_limit_per_minute))
     register_error_handlers(app)
 
     app.include_router(health.router)

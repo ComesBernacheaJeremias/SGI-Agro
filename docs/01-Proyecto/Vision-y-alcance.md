@@ -14,7 +14,7 @@ Sistema de gestión **a medida**, desarrollado desde cero ([[ADR-001-Desarrollo-
 El cliente quiere **conocer la rentabilidad y analizar los costos** de su negocio. No busca contabilidad formal ([[ADR-011-Gestion-sin-contabilidad-formal]]).
 
 ## Usuarios
-Dueño y secretario (con carga sin conexión para labores de campo, [[ADR-006-Offline-limitado]]). El desarrollador tiene el rol `soporte`. Los empleados no usan el sistema por ahora. Ver [[Actores-y-roles]].
+Dueño y secretario, desde la PC o el celular (sin carga sin conexión, [[ADR-024-Sin-carga-offline]]). El desarrollador tiene el rol `soporte`. Los empleados no usan el sistema por ahora. Ver [[Actores-y-roles]].
 
 ## Alcance
 | Área | Módulo |

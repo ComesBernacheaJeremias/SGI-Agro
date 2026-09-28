@@ -63,7 +63,7 @@ PLANIFICADO ──► EN CURSO ──► FINALIZADO
 - Lote, cultivo, superficie (ha), fecha de inicio, fecha estimada de fin, estado inicial (planificado o en curso).
 - La suma de hectáreas de ciclos activos no puede superar la del lote.
 
-**HU-04-05 · Registrar una labor** ⭐ carga frecuente, apta offline
+**HU-04-05 · Registrar una labor** ⭐ carga frecuente
 - Fecha, ciclo, tipo de labor, insumos (producto, cantidad o dosis/ha, almacén), maquinaria (activo, horas), observaciones.
 - Al guardar: descuenta stock (consumo a costo promedio con las dimensiones del ciclo) y registra las horas de maquinaria con la tarifa del activo en ese momento.
 - Sin stock suficiente → error con el producto y lo disponible.
@@ -72,7 +72,7 @@ PLANIFICADO ──► EN CURSO ──► FINALIZADO
 
 **HU-04-06 · Labor en varios ciclos** — una aplicación que cubre varios ciclos reparte el consumo y las horas por superficie (o manual).
 
-**HU-04-07 · Registrar cosecha** ⭐ apta offline
+**HU-04-07 · Registrar cosecha** ⭐
 - Fecha, ciclo, producto (por defecto el del cultivo), cantidad y unidad, almacén destino, maquinaria, "¿es la cosecha final?".
 - Ingresa el producto al stock con una **partida** creada automáticamente (ej. `L3-TOM-20270112`) que guarda el ciclo de origen ([[ADR-012-Rentabilidad-por-partida]]).
 - Si es la final, ofrece finalizar el ciclo.
@@ -94,7 +94,7 @@ Establecimientos y lotes · Temporadas · Ciclos (tablero de activos) · Cargar 
 
 ## Implementación
 
-**F7:** alta apta para la carga sin conexión (id generado en el dispositivo, cola y reenvío sin duplicar) → [[Offline-y-sincronizacion]].
+**F7:** alta con id generado en el dispositivo (reintentar no duplica). La carga sin conexión se quitó: [[ADR-024-Sin-carga-offline]].
 
 ### F3 (2026-09-27) ✅
 Decisiones: [[ADR-013-Ciclo-productivo-y-temporada]], [[ADR-017-Costo-derivado-y-cascada]].
@@ -122,3 +122,9 @@ Decisiones: [[ADR-013-Ciclo-productivo-y-temporada]], [[ADR-017-Costo-derivado-y
 **Frontend** `modules/production/`: pantalla Producción con botones **Cargar labor / Cargar cosecha / Abrir ciclo**; pestañas **Ciclos** (tarjetas con costo, cosechado y rinde; filtro estado/temporada), **Labores** (lista con filtros), **Configuración** (lotes, establecimientos, cultivos, tipos de labor). `OperationDrawer` (se adapta al tipo de labor; varios ciclos con superficie editable; insumos total o por ha; maquinaria con costo a la vista; cosecha con producto del cultivo propuesto y oferta de finalizar el ciclo si es la final), `CycleDrawer` (resumen, finalizar, reabrir), `FieldBookModal`.
 
 **Tests**: `tests/integration/test_production.py` (15).
+
+**Ajustes tras la prueba en Chrome (27/09):**
+- Insumos de una labor: el buscador muestra solo insumos, semielaborados y terminados (no la cosecha ni la reventa); el almacén muestra el stock del producto en cada uno y, al elegir el producto, se propone el que tiene stock si el elegido no tiene (`suggestWarehouse`, stock por producto con `GET /api/v1/stock?product_id=…&by_warehouse=true`).
+- Tarjeta del ciclo: rinde con unidad ("0,50 cajón/ha") y 2 columnas recién desde pantallas medianas.
+- El aviso de validación de la labor se actualiza mientras se corrige (desaparece al elegir el ciclo).
+- Maquinaria: "($ 5.000,00 por hora)" / "por km".

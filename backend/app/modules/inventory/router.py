@@ -132,8 +132,11 @@ def list_stock(
     by_warehouse: bool = False,
     below_min: bool = False,
     include_zero: bool = False,
+    product_id: UUID | None = None,
 ) -> Page[StockRowOut]:
-    filters = StockFilters(at, q, category_id, warehouse_id, by_warehouse, below_min, include_zero)
+    filters = StockFilters(
+        at, q, category_id, warehouse_id, by_warehouse, below_min, include_zero, product_id
+    )
     items, total = StockQueries(db).stock(filters, page)
     return Page(items=items, total=total, page=page.page, page_size=page.page_size)
 

@@ -1,10 +1,12 @@
 ---
 tags: [adr]
-estado: aceptada
+estado: reemplazada por [[ADR-024-Sin-carga-offline]]
 fecha: 2026-09-27
 ---
 
 # ADR-006 · Carga sin conexión limitada, para dueño y secretario
+
+> **Reemplazada (28/09/2026)** por [[ADR-024-Sin-carga-offline]]: se quitó la carga sin conexión.
 
 ## Contexto
 Dueño y secretario tienen conexión pero quieren poder cargar sin señal "por las dudas". Los empleados no usan el sistema. Un sistema 100 % offline es muy costoso.

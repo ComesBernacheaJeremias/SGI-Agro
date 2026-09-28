@@ -130,6 +130,17 @@ def test_filter_products_by_type(owner: TestClient) -> None:
     assert [p["name"] for p in items] == ["Servicio de flete"]
 
 
+def test_filter_products_by_several_types(owner: TestClient) -> None:
+    create_product(owner)
+    create_product(owner, name="Tomate", type="own_produce", unit_id=unit_id(owner, "kg"))
+    create_product(owner, name="Servicio de flete", type="service", unit_id=unit_id(owner, "un"))
+
+    params = {"type": ["input", "service"]}
+    items = owner.get("/api/v1/products", params=params).json()["items"]
+
+    assert sorted(p["name"] for p in items) == ["Glifosato", "Servicio de flete"]
+
+
 # --- Categorías ---
 
 

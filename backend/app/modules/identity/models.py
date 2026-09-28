@@ -1,7 +1,8 @@
+import enum
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import DateTime, ForeignKey, Index, String, func
+from sqlalchemy import DateTime, Enum, ForeignKey, Index, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.models import Base, BaseModel
@@ -73,3 +74,38 @@ class SessionToken(BaseModel):
     token_hash: Mapped[str] = mapped_column(String(64), unique=True)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class LoginResult(enum.StrEnum):
+    SUCCESS = "success"
+    FAILED = "failed"  # usuario o contraseña incorrectos (o usuario inactivo)
+    LOCKED = "locked"  # cuenta bloqueada por intentos fallidos
+    BLOCKED_IP = "blocked_ip"  # demasiados intentos fallidos desde esa IP
+
+
+LOGIN_RESULT_LABELS = {
+    LoginResult.SUCCESS: "Ingreso correcto",
+    LoginResult.FAILED: "Usuario o contraseña incorrectos",
+    LoginResult.LOCKED: "Cuenta bloqueada",
+    LoginResult.BLOCKED_IP: "IP bloqueada por intentos",
+}
+
+
+class LoginEvent(BaseModel):
+    """Cada intento de ingreso (correcto o no), con IP: para ver si alguien anda probando."""
+
+    __tablename__ = "login_events"
+    __audited__ = False
+
+    username: Mapped[str] = mapped_column(String(50))
+    user_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), index=True
+    )
+    ip: Mapped[str] = mapped_column(String(45), default="")
+    user_agent: Mapped[str] = mapped_column(String(200), default="")
+    result: Mapped[LoginResult] = mapped_column(
+        Enum(LoginResult, name="login_result", values_callable=lambda e: [m.value for m in e])
+    )
+
+
+Index("ix_login_events_ip_created", LoginEvent.ip, LoginEvent.created_at)

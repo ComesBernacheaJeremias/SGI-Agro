@@ -71,10 +71,14 @@ class CrudRepository[M: BaseModel](BaseRepository[M]):
         return query.order_by(*self._order_by(params.sort))
 
     def apply_filters(self, query: Select[M], filters: dict[str, Any]) -> Select[M]:
-        """Filtros propios del listado. Por defecto: igualdad campo = valor (ignora None)."""
+        """Filtros propios del listado. Por defecto: campo = valor, o campo en la lista si es
+        una lista (ignora None y listas vacías)."""
         for field, value in filters.items():
-            if value is not None:
-                query = query.where(getattr(self.model, field) == value)
+            column = getattr(self.model, field)
+            if isinstance(value, list):
+                query = query.where(column.in_(value)) if value else query
+            elif value is not None:
+                query = query.where(column == value)
         return query
 
     def _order_by(self, sort: str | None) -> list[Any]:

@@ -15,8 +15,6 @@ import dayjs from 'dayjs';
 import { useEffect } from 'react';
 
 import { useCan } from '@/app/auth/session';
-import { submitOrQueue } from '@/app/offline/submit';
-import { formatDate } from '@/shared/format/date';
 import {
   labelOf,
   partiesResource,
@@ -29,6 +27,7 @@ import { DateInput } from '@/shared/components/DateInput';
 import { EntityDrawer } from '@/shared/crud/EntityDrawer';
 import { HistoryButton } from '@/shared/crud/HistoryButton';
 import { confirmAction, notifyError, notifySuccess } from '@/shared/ui/feedback';
+import { useNewId } from '@/shared/crud/newId';
 
 import {
   documentsApi,
@@ -74,6 +73,7 @@ type Props = {
 
 export function DocumentDrawer({ documentId, type, opened, onClose }: Props) {
   const can = useCan();
+  const newId = useNewId(opened);
   const invalidate = useInvalidateInventory();
   const { data: options } = useInventoryOptions();
   const { data: warehouses = [] } = useActiveList(warehousesResource);
@@ -185,20 +185,9 @@ export function DocumentDrawer({ documentId, type, opened, onClose }: Props) {
         unit_cost: docType === 'manual_in' ? l.unit_cost : null,
       })),
     };
-    let saved;
-    if (isNew) {
-      const result = await submitOrQueue({
-        kind: 'stock_document',
-        path: '/api/v1/stock-documents',
-        body,
-        label: `${typeLabel} del ${formatDate(body.date)}`,
-        send: (b) => documentsApi.create(b as typeof body),
-      });
-      if (result.queued) return;
-      saved = result.data;
-    } else {
-      saved = await documentsApi.update(documentId, body);
-    }
+    const saved = isNew
+      ? await documentsApi.create({ ...body, id: newId })
+      : await documentsApi.update(documentId, body);
     notifySuccess(`Comprobante ${saved.document.number} guardado.`);
     notifyStockAlerts(saved.alerts);
     await invalidate();

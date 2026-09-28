@@ -12,9 +12,7 @@ actualizado: 2026-09-27
 ```mermaid
 flowchart LR
     subgraph Navegador["Navegador (PC / celular)"]
-        SPA["React (PWA)"]
-        IDB[("IndexedDB\ncola offline + caché")]
-        SPA <--> IDB
+        SPA["React (PWA instalable)"]
     end
     subgraph Servidor["Docker Compose (local o DigitalOcean)"]
         WEB["Caddy / Vite dev\narchivos del frontend"]

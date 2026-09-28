@@ -17,7 +17,6 @@ import { IconBan } from '@tabler/icons-react';
 import { useEffect } from 'react';
 
 import { useCan } from '@/app/auth/session';
-import { submitOrQueue } from '@/app/offline/submit';
 import { assetsResource } from '@/modules/assets/api';
 import { notifyStockAlerts } from '@/modules/inventory/api';
 import {
@@ -35,6 +34,7 @@ import { HistoryButton } from '@/shared/crud/HistoryButton';
 import { formatDate } from '@/shared/format/date';
 import { formatMoney, formatNumber } from '@/shared/format/number';
 import { confirmAction, notifyError, notifySuccess } from '@/shared/ui/feedback';
+import { useNewId } from '@/shared/crud/newId';
 
 import {
   cropsResource,
@@ -61,6 +61,7 @@ type Props = {
 
 export function OperationDrawer({ operationId, harvest, defaultCycleId, opened, onClose }: Props) {
   const can = useCan();
+  const newId = useNewId(opened);
   const invalidate = useInvalidateProduction();
   const { data: types = [] } = useActiveList(operationTypesResource);
   const { data: cycles } = useActiveCycles();
@@ -85,6 +86,9 @@ export function OperationDrawer({ operationId, harvest, defaultCycleId, opened, 
   const type = types.find((t) => t.id === form.values.operation_type_id);
   const harvestMode = existing ? existing.is_harvest : harvest;
   const readOnly = !can('production:write') || (existing !== undefined && !existing.editable);
+  // El aviso aparece al guardar y se actualiza (o desaparece) mientras se corrige
+  const formError =
+    form.errors._form && validateOperation(form.values, isHarvest(form.values.operation_type_id));
 
   async function loadExisting(op: Operation) {
     const products = await Promise.all(op.inputs.map((i) => productsResource.get(i.product.id)));
@@ -160,19 +164,11 @@ export function OperationDrawer({ operationId, harvest, defaultCycleId, opened, 
 
   async function submit(values: OperationValues) {
     const body = toBody(values, harvestMode);
-    if (!operationId) {
-      const result = await submitOrQueue({
-        kind: 'field_operation',
-        path: '/api/v1/field-operations',
-        body,
-        label: `${harvestMode ? 'Cosecha' : 'Labor'} del ${formatDate(values.date)}`,
-        send: (b) => operationsApi.create(b as typeof body),
-      });
-      if (result.queued) return;
-      await afterSave(result.data);
-      return;
-    }
-    await afterSave(await operationsApi.update(operationId, body));
+    await afterSave(
+      operationId
+        ? await operationsApi.update(operationId, body)
+        : await operationsApi.create({ ...body, id: newId }),
+    );
   }
 
   async function afterSave(saved: Awaited<ReturnType<typeof operationsApi.create>>) {
@@ -264,9 +260,9 @@ export function OperationDrawer({ operationId, harvest, defaultCycleId, opened, 
           Un ciclo de esta labor está finalizado: no se puede modificar.
         </Alert>
       )}
-      {form.errors._form && (
+      {formError && (
         <Alert color="red" variant="light">
-          {form.errors._form}
+          {formError}
         </Alert>
       )}
       <SimpleGrid cols={{ base: 1, sm: 2 }}>

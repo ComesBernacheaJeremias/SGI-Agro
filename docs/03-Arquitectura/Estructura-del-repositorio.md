@@ -45,9 +45,8 @@ Proyecto/
 │   ├── Dockerfile
 │   └── src/
 │       ├── api/              # cliente generado desde OpenAPI
-│       ├── app/              # layout, rutas, proveedores
+│       ├── app/              # layout (con aviso "Sin conexión"), rutas, proveedores, sesión
 │       ├── modules/<modulo>/ # pantallas por módulo
-│       ├── offline/          # cola de sincronización
 │       └── shared/           # componentes y utilidades comunes (tablas, formularios, formato de números/fechas)
 │
 ├── docker/postgres/init/     # scripts de inicialización de PostgreSQL (crea la base de tests)

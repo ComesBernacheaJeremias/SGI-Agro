@@ -27,8 +27,8 @@ export function refreshSession(): Promise<boolean> {
       return true;
     })
     .catch(() => {
-      // Sin red: se sigue con el último usuario (carga sin conexión); si no hay, al login
-      if (!sessionStore.signInOffline()) sessionStore.signOut();
+      // Sin red: al abrir la app va al login; con la sesión abierta, se sigue (el pedido falla)
+      if (sessionStore.get().status === 'checking') sessionStore.signOut();
       return false;
     })
     .finally(() => {

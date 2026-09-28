@@ -42,8 +42,10 @@ export function NumberInput({
       onChange={(next) => onChange?.(next === '' ? null : String(next))}
       thousandSeparator={THOUSAND_SEPARATOR}
       decimalSeparator={DECIMAL_SEPARATOR}
+      // Punto o coma: los dos escriben la coma decimal (los puntos de miles los pone solo)
+      allowedDecimalSeparators={[DECIMAL_SEPARATOR, '.']}
       decimalScale={max}
-      fixedDecimalScale={kind === 'price'}
+      // Sin ",00" automático al escribir; los listados y totales sí muestran 2 decimales
       allowNegative={allowNegative}
       hideControls
       inputMode="decimal"

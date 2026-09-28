@@ -54,6 +54,12 @@ def activate_user(id_: UUID, db: DbSession, actor: Manager) -> UserOut:
     return UserOut.model_validate(UserService(db, actor).set_active(id_, active=True))
 
 
+@router.post("/{id_}/revoke-sessions", status_code=status.HTTP_204_NO_CONTENT)
+def revoke_sessions(id_: UUID, db: DbSession, actor: Manager) -> None:
+    """Cierra todas las sesiones abiertas del usuario (ej. celular perdido)."""
+    UserService(db, actor=actor).revoke_sessions(id_)
+
+
 @router.post("/{id_}/reset-password", status_code=status.HTTP_204_NO_CONTENT)
 def reset_password(id_: UUID, body: ResetPasswordRequest, db: DbSession, actor: Manager) -> None:
     UserService(db, actor).reset_password(id_, body.password)

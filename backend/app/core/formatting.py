@@ -10,6 +10,7 @@ from decimal import ROUND_HALF_UP, Decimal
 
 def _format(value: Decimal, min_decimals: int, max_decimals: int) -> str:
     rounded = value.quantize(Decimal(1).scaleb(-max_decimals), rounding=ROUND_HALF_UP)
+    rounded = abs(rounded) if rounded == 0 else rounded  # sin "-0,00"
     text = f"{rounded:,.{max_decimals}f}"  # 1,234,567.891 (formato inglés)
     integer, _, fraction = text.partition(".")
     fraction = fraction.rstrip("0").ljust(min_decimals, "0")

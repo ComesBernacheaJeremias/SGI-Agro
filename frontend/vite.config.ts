@@ -11,7 +11,7 @@ const apiTarget = process.env.API_PROXY_TARGET ?? 'http://localhost:8000';
 export default defineConfig({
   plugins: [
     react(),
-    // App instalable y que abre sin conexión (ADR-006). Los datos los guarda la app (IndexedDB).
+    // App instalable (ícono en el celular o la PC). Sin carga sin conexión: ADR-024.
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['apple-touch-icon.png'],

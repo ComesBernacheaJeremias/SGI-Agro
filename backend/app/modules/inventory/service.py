@@ -124,7 +124,7 @@ class StockDocumentService:
 
     def create(self, data: DocumentIn) -> tuple[StockDocument, list[StockAlertOut]]:
         if data.id and (existing := self.session.get(StockDocument, data.id)):
-            return existing, []  # reenvío desde la carga sin conexión
+            return existing, []  # reintento del mismo guardado
         self._validate(data)
         self.engine.lock_products(line.product_id for line in data.lines)
         document = self._new_document(data.type, data.id)

@@ -77,6 +77,9 @@ Login · Mi perfil · Usuarios · Roles · Historial general · Componente "Hist
 - `src/api/client.ts`: agrega el token a cada request; ante 401 renueva la sesión **una sola vez** (compartida entre llamadas simultáneas) y reintenta.
 - `src/app/auth/RequireAuth.tsx`, `src/modules/auth/LoginPage.tsx`; al abrir la app se restaura la sesión con la cookie.
 
+### Seguridad (2026-09-27) ✅
+[[ADR-023-Endurecimiento-de-seguridad]]: registro de accesos (`login_events`, *Historial → Accesos*, `GET /api/v1/audit/logins`), tope de login por IP, **Cerrar sesiones** de un usuario (`POST /api/v1/users/{id}/revoke-sessions`), cambiar la propia contraseña cierra las demás sesiones, borrado de datos del dispositivo al cerrar sesión, comandos de consola (`list-users`, `reset-password`, `deactivate-user`, `activate-user`, `revoke-sessions`). Detalle: [[Seguridad]].
+
 ### F1 (2026-09-27) — usuarios, roles, permisos, historial ✅
 
 **Roles y permisos** ([[ADR-008-Autenticacion-y-roles]])
@@ -99,3 +102,5 @@ Login · Mi perfil · Usuarios · Roles · Historial general · Componente "Hist
 **Frontend**: `modules/users` (pestañas Usuarios y Roles, panel de usuario con resetear contraseña, panel de rol con permisos por grupo), `modules/profile` (Mi perfil: cambiar contraseña, cerrar todas las sesiones), `modules/audit` (historial general con filtros). Menú filtrado por permisos (`useCan`).
 
 **Tests**: `test_permissions.py`, `test_audit.py`, `test_users.py`, `test_roles.py`.
+
+**Ajustes 27/09 (prueba en Chrome):** *Historial → Accesos* muestra el dispositivo resumido ("Chrome · Windows"; el texto completo al pasar el mouse); el buscador del manual busca por comienzo de palabra ("venta" no encuentra "inventario"); ningún número muestra "-0,00" (frontend `signDisplay: 'negative'`, backend `formatting.py`).

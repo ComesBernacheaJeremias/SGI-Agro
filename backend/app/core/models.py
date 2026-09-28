@@ -26,7 +26,7 @@ class Base(DeclarativeBase):
 class BaseModel(Base):
     """Toda tabla del sistema hereda de acá.
 
-    - `id`: UUIDv7 (ordenable por fecha; el frontend puede generarlo para la carga offline).
+    - `id`: UUIDv7 (ordenable por fecha; el frontend lo genera en algunas altas para no duplicar).
     - `created_*` / `updated_*`: se completan automáticamente con el usuario del request.
     """
 

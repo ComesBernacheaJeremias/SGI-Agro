@@ -35,13 +35,13 @@ export const MANUAL: ManualSection[] = [
         ],
       },
       {
-        question: '¿Puedo cargar sin señal?',
+        question: '¿Y si se corta internet?',
         steps: [
-          'Sí: labores, cosechas, movimientos de stock y mezclas.',
-          'Arriba aparece "Sin conexión". Cargá normal; queda "pendiente".',
-          'Cuando vuelve la señal se envía solo.',
+          'Sin internet no se puede guardar: arriba aparece "Sin conexión".',
+          'Usá los datos del celular, o compartilos a la PC (zona Wi-Fi / hotspot).',
+          'Si no hay forma, anotalo y cargalo cuando vuelva la conexión.',
         ],
-        tip: 'Tenés que haber entrado al menos una vez con señal en ese celular.',
+        tip: 'Si se cortó justo al guardar, tocá Guardar de nuevo: no se duplica.',
       },
     ],
   },
@@ -210,6 +210,15 @@ export const MANUAL: ManualSection[] = [
         tip: 'Un usuario por persona: así se sabe quién cargó cada cosa.',
       },
       {
+        question: 'Perdí el celular / alguien más usó mi sesión',
+        steps: [
+          'Usuarios y roles → tocá el usuario → Cerrar sesiones.',
+          'Se cierra en todos los dispositivos; hay que volver a entrar.',
+          'Si puede saber la contraseña, cambiala (Mi perfil).',
+        ],
+        tip: 'En Historial → Accesos se ve quién entró, desde dónde y los intentos fallidos.',
+      },
+      {
         question: '¿Quién cambió esto?',
         steps: ['Botón Historial en cualquier registro, o el menú Historial.'],
       },
@@ -234,7 +243,10 @@ export const MANUAL: ManualSection[] = [
 
 const normalize = (text: string) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
-/** Secciones con las preguntas que contienen todas las palabras buscadas (sin tildes). */
+/**
+ * Secciones con las preguntas que contienen todas las palabras buscadas, sin tildes y por
+ * comienzo de palabra ("venta" encuentra "ventas", no "inventario").
+ */
 export function searchManual(query: string): ManualSection[] {
   const words = normalize(query).split(/\s+/).filter(Boolean);
   if (words.length === 0) return MANUAL;
@@ -243,8 +255,8 @@ export function searchManual(query: string): ManualSection[] {
     topics: section.topics.filter((topic) => {
       const text = normalize(
         [section.title, topic.question, ...topic.steps, topic.tip ?? ''].join(' '),
-      );
-      return words.every((w) => text.includes(w));
+      ).split(/[^a-z0-9]+/);
+      return words.every((w) => text.some((t) => t.startsWith(w)));
     }),
   })).filter((section) => section.topics.length > 0);
 }

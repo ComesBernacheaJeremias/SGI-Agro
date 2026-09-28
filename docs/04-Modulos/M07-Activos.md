@@ -60,3 +60,7 @@ Backend `app/modules/assets/`:
 Frontend `modules/assets/`: tocar un activo abre su **ficha** (medidor estimado, uso, gasto real, costo real por h/km vs. tarifa, período; pestañas Planes, Mantenimientos, Gastos, Lecturas; "Registrar mantenimiento", "Nuevo plan", "Cargar lectura", "Editar datos"). Columna "Mantenimiento" en la lista, **campana de mantenimientos** en la barra superior y tarjeta en el tablero.
 
 Tests: `tests/integration/test_maintenance.py`.
+
+**Ajustes tras la prueba del usuario (27/09):** la unidad se muestra como "horas" o "km" (nunca "h"; única definición `meter_unit` en `assets/models.py` y `meterUnit`/`meterRate` en el frontend); el plan pide "Cada cuántos km" en rodados y "Cada cuántas horas de uso" en máquinas, con los meses como opción; al crear un activo de tipo Vehículo se propone medir en km.
+
+**Ajuste 27/09 (prueba en Chrome):** "Costo real por hora" / "por km" en la ficha; en el reporte, columna "Costo real (por hora o km)" (el uso ya muestra la unidad).

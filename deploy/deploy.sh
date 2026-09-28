@@ -5,6 +5,7 @@ set -eu
 cd "$(dirname "$0")"
 
 [ -f .env ] || { echo "Falta deploy/.env (copiar de .env.prod.example y completar)."; exit 1; }
+chmod 600 .env  # los secretos solo los lee root
 
 echo "→ Trayendo el código"
 git pull --ff-only

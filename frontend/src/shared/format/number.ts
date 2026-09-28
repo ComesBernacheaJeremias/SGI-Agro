@@ -23,6 +23,8 @@ const formatters = Object.fromEntries(
       maximumFractionDigits: max,
       // 'always': agrupa también los miles de 4 dígitos (1.234), que es-AR no agrupa por defecto
       useGrouping: 'always' as unknown as boolean,
+      // sin "-0,00": signo solo si el número redondeado es negativo (ES2023, falta en los tipos)
+      signDisplay: 'negative' as unknown as 'auto',
     }),
   ]),
 ) as Record<NumberKind, Intl.NumberFormat>;

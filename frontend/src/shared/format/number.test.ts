@@ -21,6 +21,12 @@ describe('formatNumber', () => {
     expect(formatNumber('abc')).toBe('');
   });
 
+  it('el cero nunca lleva signo menos', () => {
+    expect(formatNumber(-0)).toBe('0,00');
+    expect(formatNumber(-0.001)).toBe('0,00');
+    expect(formatNumber(-1.5)).toBe('-1,50');
+  });
+
   it('formatMoney agrega el signo $', () => {
     expect(formatMoney('10000')).toBe('$ 10.000,00');
     expect(formatMoney(null)).toBe('');

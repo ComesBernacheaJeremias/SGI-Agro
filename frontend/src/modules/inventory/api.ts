@@ -1,6 +1,11 @@
 /** Llamadas a la API de inventario y avisos de stock mínimo. */
 import { notifications } from '@mantine/notifications';
-import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  type QueryClient,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 
 import { api } from '@/api/client';
 import { unwrap } from '@/api/errors';
@@ -46,6 +51,41 @@ export function useStock(query: StockQuery) {
     queryFn: async () => unwrap(await api.GET('/api/v1/stock', { params: { query } })),
     placeholderData: keepPreviousData,
   });
+}
+
+/** Stock de un producto en cada almacén, de mayor a menor (para proponer de dónde sacarlo). */
+const productStockQuery = (productId: string) => ({
+  queryKey: [KEYS.stock, 'by-warehouse', productId],
+  queryFn: async () => {
+    const query = { product_id: productId, by_warehouse: true };
+    const page = unwrap(await api.GET('/api/v1/stock', { params: { query } }));
+    return page.items.sort((a, b) => Number(b.quantity) - Number(a.quantity));
+  },
+  staleTime: 30_000,
+});
+
+export function useProductStock(productId: string | null) {
+  return useQuery({ ...productStockQuery(productId ?? ''), enabled: productId !== null });
+}
+
+/**
+ * Almacén a proponer para sacar el producto: el que más stock tiene, si en el elegido no hay.
+ * `null` = dejar el elegido (tiene stock, no hay en ninguno o no hay conexión).
+ */
+export async function suggestWarehouse(
+  queryClient: QueryClient,
+  productId: string,
+  currentId: string | null,
+): Promise<string | null> {
+  if (!navigator.onLine) return null;
+  try {
+    const rows = await queryClient.fetchQuery(productStockQuery(productId));
+    const available = rows.filter((r) => Number(r.quantity) > 0);
+    if (available.some((r) => r.warehouse?.id === currentId)) return null;
+    return available[0]?.warehouse?.id ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export function useStockAlerts(enabled: boolean) {

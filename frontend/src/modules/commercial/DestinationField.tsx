@@ -43,7 +43,7 @@ export function DestinationField({ value, onChange, disabled }: Props) {
   const current = placeKey(value);
   const cycleItems = (cycles?.items ?? []).map((c) => ({
     value: `cycle:${c.id}`,
-    label: `${c.name} (${c.plot.name})`,
+    label: c.name,
   }));
   // Un ciclo finalizado no aparece en la lista, pero si ya estaba cargado se muestra igual
   if (value.crop_cycle_id && !cycleItems.some((i) => i.value === current)) {

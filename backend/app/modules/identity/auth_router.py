@@ -1,10 +1,11 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Cookie, Response, status
+from fastapi import APIRouter, Cookie, Request, Response, status
 
 from app.core.config import get_settings
 from app.core.db import DbSession
 from app.core.errors import UnauthorizedError
+from app.core.security import hash_session_token
 from app.modules.identity.auth_service import INVALID_SESSION, AuthResult, AuthService
 from app.modules.identity.authorization import effective_permissions
 from app.modules.identity.dependencies import CurrentUser
@@ -48,8 +49,13 @@ def _session_response(response: Response, result: AuthResult) -> TokenResponse:
 
 
 @router.post("/login")
-def login(body: LoginRequest, db: DbSession, response: Response) -> TokenResponse:
-    result = AuthService(db).login(body.username, body.password)
+def login(body: LoginRequest, db: DbSession, request: Request, response: Response) -> TokenResponse:
+    result = AuthService(db).login(
+        body.username,
+        body.password,
+        ip=request.client.host if request.client else "",
+        user_agent=request.headers.get("user-agent", ""),
+    )
     return _session_response(response, result)
 
 
@@ -82,5 +88,15 @@ def me(user: CurrentUser) -> MeOut:
 
 
 @router.post("/change-password", status_code=status.HTTP_204_NO_CONTENT)
-def change_password(body: ChangePasswordRequest, user: CurrentUser, db: DbSession) -> None:
-    UserService(db, actor=user).change_own_password(user, body.current_password, body.new_password)
+def change_password(
+    body: ChangePasswordRequest,
+    user: CurrentUser,
+    db: DbSession,
+    session_token: SessionCookie = None,
+) -> None:
+    UserService(db, actor=user).change_own_password(
+        user,
+        body.current_password,
+        body.new_password,
+        keep_session_hash=hash_session_token(session_token) if session_token else None,
+    )

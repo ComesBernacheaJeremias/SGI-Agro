@@ -6,7 +6,8 @@ actualizado: 2026-09-27
 # Flujo Git
 
 - **El desarrollador ejecuta los comandos de git.** Claude propone los comandos exactos (`git add`, `git commit`, `git push`) al terminar cada tarea; no hace commits ni push por su cuenta.
-- Repositorio privado en GitHub (respaldo y historial).
+- Repositorio privado en GitHub (respaldo y historial): https://github.com/ComesBernacheaJeremias/SGI-Agro.git — rama `main`. Primer commit y push: 27/09/2026 (`feat: SGI Agro F0-F7`).
+- Los scripts de `deploy/` se versionan como ejecutables (`git update-index --chmod=+x`), y `.gitattributes` fuerza fin de línea LF en scripts y configuración que corren en Linux.
 
 ## Ramas
 - `main`: siempre funcionando.
@@ -24,4 +25,4 @@ actualizado: 2026-09-27
 - `CHANGELOG.md` actualizado al cerrar cada etapa (F0, F1…), a partir de los commits.
 
 ## Antes de cada commit
-pre-commit corre formato, lint y detección de secretos automáticamente. Si falla, se corrige y se vuelve a commitear.
+pre-commit corre formato, lint y detección de secretos automáticamente (una vez instalado: `pip install pre-commit` + `pre-commit install`; **todavía no instalado**). Si falla, se corrige y se vuelve a commitear.

@@ -210,6 +210,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/users/{id_}/revoke-sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Revoke Sessions
+         * @description Cierra todas las sesiones abiertas del usuario (ej. celular perdido).
+         */
+        post: operations["revoke_sessions_api_v1_users__id___revoke_sessions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/users/{id_}/reset-password": {
         parameters: {
             query?: never;
@@ -315,6 +335,26 @@ export interface paths {
          * @description Historial general con filtros (dueño y soporte).
          */
         get: operations["general_history_api_v1_audit_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/audit/logins": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Login Events
+         * @description Intentos de ingreso (correctos y fallidos), los más nuevos primero.
+         */
+        get: operations["login_events_api_v1_audit_logins_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3341,6 +3381,8 @@ export interface components {
         Direction: "purchase" | "sale";
         /** DocumentIn */
         DocumentIn: {
+            /** Id */
+            id?: string | null;
             type: components["schemas"]["DocumentType"];
             /**
              * Date
@@ -3823,6 +3865,28 @@ export interface components {
             /** Total Cost */
             total_cost: string;
         };
+        /** LoginEventOut */
+        LoginEventOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Username */
+            username: string;
+            /** Ip */
+            ip: string;
+            /** User Agent */
+            user_agent: string;
+            result: components["schemas"]["LoginResult"];
+            /** Result Label */
+            result_label: string;
+        };
         /** LoginRequest */
         LoginRequest: {
             /** Username */
@@ -3830,6 +3894,11 @@ export interface components {
             /** Password */
             password: string;
         };
+        /**
+         * LoginResult
+         * @enum {string}
+         */
+        LoginResult: "success" | "failed" | "locked" | "blocked_ip";
         /** MaintenanceIn */
         MaintenanceIn: {
             /**
@@ -3985,6 +4054,8 @@ export interface components {
         };
         /** OperationIn */
         OperationIn: {
+            /** Id */
+            id?: string | null;
             /**
              * Date
              * Format: date
@@ -4185,6 +4256,8 @@ export interface components {
         };
         /** OrderIn */
         OrderIn: {
+            /** Id */
+            id?: string | null;
             /**
              * Date
              * Format: date
@@ -4406,6 +4479,17 @@ export interface components {
         Page_FarmOut_: {
             /** Items */
             items: components["schemas"]["FarmOut"][];
+            /** Total */
+            total: number;
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+        };
+        /** Page[LoginEventOut] */
+        Page_LoginEventOut_: {
+            /** Items */
+            items: components["schemas"]["LoginEventOut"][];
             /** Total */
             total: number;
             /** Page */
@@ -5841,7 +5925,9 @@ export interface operations {
             query?: never;
             header?: never;
             path?: never;
-            cookie?: never;
+            cookie?: {
+                sgi_session?: string | null;
+            };
         };
         requestBody: {
             content: {
@@ -6053,6 +6139,35 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["UserOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revoke_sessions_api_v1_users__id___revoke_sessions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id_: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {
@@ -6294,6 +6409,42 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Page_AuditEntryOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    login_events_api_v1_audit_logins_get: {
+        parameters: {
+            query?: {
+                q?: string | null;
+                result?: components["schemas"]["LoginResult"] | null;
+                date_from?: string | null;
+                date_to?: string | null;
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_LoginEventOut_"];
                 };
             };
             /** @description Validation Error */
@@ -6733,7 +6884,7 @@ export interface operations {
                 sort?: string | null;
                 page?: number;
                 page_size?: number;
-                type?: components["schemas"]["ProductType"] | null;
+                type?: components["schemas"]["ProductType"][] | null;
                 category_id?: string | null;
             };
             header?: never;
@@ -7498,6 +7649,7 @@ export interface operations {
                 by_warehouse?: boolean;
                 below_min?: boolean;
                 include_zero?: boolean;
+                product_id?: string | null;
                 page?: number;
                 page_size?: number;
             };

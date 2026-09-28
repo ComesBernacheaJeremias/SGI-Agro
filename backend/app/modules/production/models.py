@@ -17,7 +17,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.formatting import format_money, format_quantity
 from app.core.models import BaseModel
-from app.modules.assets.models import Asset
+from app.modules.assets.models import Asset, meter_unit
 from app.modules.masterdata.models import Product, Unit, Warehouse
 
 
@@ -307,9 +307,9 @@ class FieldOperationAsset(BaseModel):
 
     @property
     def summary(self) -> str:
-        unit = "h" if self.asset.meter == "hours" else "km"
         return (
-            f"{self.asset.name}: {format_quantity(self.usage)} {unit} × {format_money(self.rate)}"
+            f"{self.asset.name}: {format_quantity(self.usage)} {meter_unit(self.asset.meter)}"
+            f" × {format_money(self.rate)}"
         )
 
 

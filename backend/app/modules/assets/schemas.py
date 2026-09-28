@@ -88,7 +88,7 @@ class PlanStatusOut(Schema):
 
     plan: PlanOut
     asset: Ref
-    unit: str  # "h" o "km"
+    unit: str  # "horas" o "km"
     last_date: dt.date  # último mantenimiento (o inicio del plan)
     last_reading: Decimal
     due_reading: Decimal | None

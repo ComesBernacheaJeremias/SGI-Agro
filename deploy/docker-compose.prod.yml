@@ -1,6 +1,10 @@
 # Producción (DigitalOcean). Uso en el servidor, desde la carpeta deploy/:
 #   ./deploy.sh
 # Guía completa: docs/05-Desarrollo/Entorno-local-y-deploy.md
+#
+# Mínimo privilegio: la base tiene un administrador (solo lo usan la inicialización y el
+# backup/restauración) y un usuario de la aplicación, dueño de su base pero sin permisos de
+# superusuario. La API recibe solo lo que necesita (no la clave del administrador).
 name: sgi-agro-prod
 
 services:
@@ -8,25 +12,42 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${DB_ADMIN_USER}
+      POSTGRES_PASSWORD: ${DB_ADMIN_PASSWORD}
+      POSTGRES_DB: postgres
+      # Para crear el usuario y la base de la aplicación la primera vez (postgres-init/)
+      APP_DB_USER: ${POSTGRES_USER}
+      APP_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      APP_DB_NAME: ${POSTGRES_DB}
       TZ: America/Argentina/Buenos_Aires
     volumes:
       - db_data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_ADMIN_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 10
-    # Sin puertos publicados: solo la API llega a la base
+    # Sin puertos publicados: solo la API y el backup llegan a la base
 
   api:
     build: ../backend
     restart: unless-stopped
-    env_file: .env
+    # Variables explícitas (no todo el .env): la API no conoce la clave del administrador
     environment:
       ENVIRONMENT: production
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      DB_HOST: db
+      DB_PORT: "5432"
+      JWT_SECRET: ${JWT_SECRET}
+      ACCESS_TOKEN_MINUTES: ${ACCESS_TOKEN_MINUTES:-15}
+      REFRESH_TOKEN_DAYS: ${REFRESH_TOKEN_DAYS:-30}
+      LOGIN_MAX_ATTEMPTS: ${LOGIN_MAX_ATTEMPTS:-5}
+      LOGIN_LOCK_MINUTES: ${LOGIN_LOCK_MINUTES:-15}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      APP_VERSION: ${APP_VERSION:-}
     # Migraciones pendientes y arranque sin recarga, con 2 procesos
     command: >
       sh -c "alembic upgrade head &&
@@ -62,12 +83,17 @@ services:
     # pg_dump diario comprimido; copia a DigitalOcean Spaces si está configurado
     build: ./backup
     restart: unless-stopped
-    env_file: .env
     environment:
       PGHOST: db
-      PGUSER: ${POSTGRES_USER}
-      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGUSER: ${DB_ADMIN_USER}
+      PGPASSWORD: ${DB_ADMIN_PASSWORD}
       PGDATABASE: ${POSTGRES_DB}
+      APP_DB_USER: ${POSTGRES_USER}
+      SPACES_KEY: ${SPACES_KEY:-}
+      SPACES_SECRET: ${SPACES_SECRET:-}
+      SPACES_BUCKET: ${SPACES_BUCKET:-}
+      SPACES_REGION: ${SPACES_REGION:-nyc3}
+      BACKUP_HOUR: ${BACKUP_HOUR:-03}
       TZ: America/Argentina/Buenos_Aires
     volumes:
       - backups:/backups

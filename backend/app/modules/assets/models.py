@@ -41,6 +41,12 @@ class AssetMeter(enum.StrEnum):
 
 
 ASSET_METER_LABELS = {AssetMeter.HOURS: "Horas", AssetMeter.KM: "Kilómetros"}
+# Unidad que se muestra junto a una cantidad ("250 horas", "12.000 km")
+METER_UNITS = {AssetMeter.HOURS: "horas", AssetMeter.KM: "km"}
+
+
+def meter_unit(meter: str) -> str:
+    return METER_UNITS[AssetMeter(meter)]
 
 
 class AssetStatus(enum.StrEnum):

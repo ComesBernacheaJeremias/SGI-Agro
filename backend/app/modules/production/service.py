@@ -216,7 +216,7 @@ class FieldOperationService:
 
     def create(self, data: OperationIn) -> tuple[FieldOperation, list[StockAlertOut]]:
         if data.id and (existing := self.session.get(FieldOperation, data.id)):
-            return existing, []  # reenvío desde la carga sin conexión
+            return existing, []  # reintento del mismo guardado
         op_type, cycles = self._validate(data)
         operation = FieldOperation(id=data.id or uuid7(), number=next_number(self.session, "LAB"))
         self.session.add(operation)
