@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Entorno local: levanta db, api y web y muestra los logs. Ctrl+C lo apaga (los datos quedan en el volumen).
+# Entorno local: levanta db, api y web y muestra los logs. Ctrl+C (o cerrar la terminal) lo apaga;
+# los datos quedan en el volumen.
 # Uso: ./dev.sh           levantar
 #      ./dev.sh --build   reconstruir las imágenes antes (tras cambiar dependencias del backend o del frontend)
 set -euo pipefail
@@ -27,7 +28,7 @@ docker compose up "${up_args[@]}"
 
 logs_pid=""
 stop() {
-  trap - INT TERM
+  trap - INT TERM HUP
   echo
   echo "Apagando el sistema..."
   [[ -n "$logs_pid" ]] && kill "$logs_pid" 2>/dev/null || true
@@ -35,6 +36,8 @@ stop() {
   exit 0
 }
 trap stop INT TERM
+# Terminal cerrada: también apaga (sin terminal donde escribir, la salida va a /dev/null)
+trap 'exec >/dev/null 2>&1; stop' HUP
 
 cat <<EOF
 
