@@ -22,10 +22,11 @@ Entorno: Docker Compose
 
 ## Levantar en local
 ```bash
-cp .env.example .env        # primera vez; revisar valores
-docker compose up -d        # levanta db, api y web (la API aplica las migraciones sola)
+./dev.sh                    # levanta db, api y web y muestra los logs; Ctrl+C lo apaga (los datos quedan)
+./dev.sh --build            # igual, pero reconstruye las imágenes (tras cambiar dependencias)
 docker compose exec api python -m app.cli create-user   # primera vez: crear tu usuario
 ```
+`dev.sh` crea el `.env` desde `.env.example` si no existe (revisar valores). Sin el script: `docker compose up -d` y `docker compose stop`.
 
 | Qué | Dónde |
 |---|---|

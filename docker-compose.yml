@@ -26,8 +26,8 @@ services:
     environment:
       # En Windows los cambios en carpetas montadas no siempre se detectan sin polling
       WATCHFILES_FORCE_POLLING: "true"
-    # Aplica migraciones pendientes y arranca con recarga automática
-    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    # Aplica migraciones pendientes y arranca con recarga automática (exec: uvicorn recibe la señal de apagado)
+    command: sh -c "alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     volumes:
       - ./backend:/app
     ports:

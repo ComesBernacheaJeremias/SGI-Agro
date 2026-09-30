@@ -1,6 +1,6 @@
 ---
 tags: [desarrollo, infraestructura]
-actualizado: 2026-09-27
+actualizado: 2026-09-30
 ---
 
 # Entorno local y deploy
@@ -14,11 +14,12 @@ Docker Compose con tres servicios:
 - `web`: Vite con recarga automática.
 
 ```bash
-cp .env.example .env
-docker compose up -d
+./dev.sh           # levanta todo y muestra los logs de api y web; Ctrl+C lo apaga (docker compose stop)
+./dev.sh --build   # reconstruye las imágenes antes (tras cambiar dependencias)
 # API y Swagger: http://localhost:8000/api/docs
 # Frontend:      http://localhost:5173
 ```
+`dev.sh` crea el `.env` desde `.env.example` si falta. Los datos quedan en el volumen `db_data`.
 Datos de prueba: script `seed` con establecimientos, lotes, productos y ciclos de ejemplo.
 
 ## Producción (F7, DigitalOcean)
